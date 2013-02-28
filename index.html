@@ -17,24 +17,39 @@
 
 <body>
 
-	<canvas id="game" width="600" height="400"></canvas>
+	<canvas id="game" width="800" height="600"></canvas>
+	<!--<div id="game" style="position:relative;top:0;left:0;width:800px;height:600px;overflow:hidden;background-color:rgb(240,240,240);"></div>-->
 
-	<script src="js/rocket88/externals/Box2dWeb-2.1.a.3.min.js"></script>
-	<script src="js/rocket88/eightyeight-min.js"></script>
+	<script src="js/externals/Box2d.min.js"></script>
+	<script src="js/externals/stats.min.js"></script>
+	<script src="js/eightyeight.min.js"></script>
 	
 	<script src="js/examples/testbed/level1.js"></script>
 	<script src="js/examples/testbed/gamelayer.js"></script>
-	<script src="js/examples/testbed/player.js"></script>	
+	<script src="js/examples/testbed/player.js"></script>
 	
 	<script>
-		// Get canvas
-		var myCanvas = document.getElementById("game");
-		var myScene = new Level1("level1");
+		// Create renderers
+		var myRenderer = new CanvasRenderer(document.getElementById("game"));		
+		//var myRenderer = new HTMLRenderer(document.getElementById("game"));
+
+		// Initialize game engine
+		var myGame = new Rocket88(myRenderer, true);
+
+		// Add scene to the game engine
+		myGame.scene = new Level1();
+
+		var myImage = new Image();
+		myImage.src = "js/examples/testbed/images/data.png";
+		myImage.onload = function() {
+			Rocket88.assetStore.addAsset(this, "js/examples/testbed/images/data.png");
+
+			// We have a lift off!
+			myGame.liftOff();	
+		}
 		
-		// Initialize game 
-		var myRocket = new Rocket88(myCanvas, true);
-		myRocket.scene(myScene);
-		myRocket.takeOff();
+		// Crashes the game
+		//myGame.crash();
 	</script>
 
 </body>

@@ -1,69 +1,73 @@
-/**
- * @author patrickpietens
- *
- */
-
 var Rocket88 = Class.extend({
 
-	init: function(canvas, debugMode, renderer)
-	{
-		if(!canvas)
-		{
-			throw ReferenceError("'Houston we have a problem': Required parameter 'canvas' is missing");
+	// Executes when the object is instantiated
+	init: function(renderer, debugMode) {		
+		if(!renderer) {
+			throw ReferenceError("Houston, we have a problem. Required argument 'renderer' is missing");
 		}
-		
-		// Private properties
-		this._origin = new Point(canvas.width * 0.5, canvas.height * 0.5);
 
-		this._accumulator = 0;
-		this._currentScene = null;
-		this._currentTime = new Date().getTime();
-		this._debugMode = debugMode || false;
-		this._frameTime = 1000 / 60;			
-		this._paused = false;
+		// Author information
+		this.version = "0.1",
+		this.authors = "Patrick Pietens"
 
-		switch(renderer)
-		{
-			default:
-				console.warn("Optional parameter 'renderer' is missing, using default CanvasRenderer");
+		console.log("This game utilises the Rocket88 engine v" + this.version);
+
+		if(debugMode) {
+			this._stats = new Stats();
+			this._stats.domElement.style.position = "absolute";
+			this._stats.domElement.style.top = "0px";
+			this._stats.domElement.style.left = "0px";
 			
-			case "canvas":
-				this._renderer = new CanvasRenderer(canvas);
-				break;
+			document.body.appendChild(this._stats.domElement);			
 		}
+
+		Rocket88 = this;
+
+		// Private properties
+		this._accumulator 	= 0;
+		this._crashed		= false;
+		this._currentScene 	= null;
+		this._currentTime 	= new Date().getTime();
+		this._frame 		= 0;
+		this._frameTime 	= 1000 / 60;
+		this._paused 		= false;
+
+		this._assetStore 	= new AssetStore();
+		this._renderer 		= renderer;
+		
+		// Public properties
+		this.debugMode	 	= debugMode;
+		this.showWarnings 	= debugMode;
+		this.showErrors	 	= debugMode;
+
+	    // Getters
+		this.__defineGetter__("type", function(){ return "Rocket88" });
+		this.__defineGetter__("assetStore", function(){ return this._assetStore });
+		this.__defineGetter__("crashed", function(){ return this._crashed });
+		this.__defineGetter__("renderer", function(){ return this._renderer });
+		this.__defineGetter__("scene", function(){ return this._currentScene });
+
+		// Setters
+		this.__defineSetter__("scene", function(scene) {
+			
+			// Destroy previous scene
+			if(this._currentScene && this._currentScene.autoDestroy) {
+				this._currentScene.destroy();
+			}
+			
+			// Create the scene
+			scene.ready();			
+
+			// Set the scene
+			this._currentScene = scene;
+			this._renderer.ready();
+		});
 	},
 		
-
-	// Starts running the game. This function will resume the game after it is paused
-	// NOTE: it will fail when their isn't scene found
-	takeOff: function()
-	{
-		if(!this._currentScene)
-		{
-            console.error("'Houston we have a problem': Rocket'88 requires a scene before taking off");
-            return false;
-        }
-		
-		this._paused = false;
-		this.updateWithFixedTimestep();
-
-		return true;
-	},
-
-	
-	// Pauses the game
-	land: function()
-	{
-		this._paused = true;
-	},
-	
-	
 	// Updates the scene using a fixed timestep
-	updateWithFixedTimestep: function()
-	{
-		if (!this._paused)
-		{		
-			requestAnimationFrame(function() { this.updateWithFixedTimestep() }.bind(this));
+	updateWithFixedTimestep: function() {	
+		if (!this._paused && !this._crashed) {		
+			requestAnimationFrame(delegate(this, this.updateWithFixedTimestep));
 
 			// Set local properties
 			var myNow = new Date().getTime();
@@ -74,79 +78,70 @@ var Rocket88 = Class.extend({
 			this._currentTime = myNow;
 
 			// Render the scene according the time accumulator
-			while (this._accumulator >= this._frameTime)
-			{
+			while(this._accumulator >= this._frameTime) {
 				this._accumulator -= this._frameTime;
 				this.update();
 			}		
-			
 		}
 	},
-	
-	
-	//  inheritDoc
-	update: function()
-	{
+
+	// Executes every render tick
+	update: function() {
+		this._frame++;
+
+		this._renderer.prepare();
 		this._currentScene.update();
-	},
-	
-	
-	// Scene that represents the currentScene
-	scene: function(scene)
-	{
-		// Sets the scene
-		if(scene)
-		{
-			// Destroy previous scene
-			if(this._currentScene && this._currentScene.autoDestroy)
-			{
-				this._currentScene.destroy();
-			}
-			
-			// Set injection map
-			var myMap = 
-			{
-				debugMode: this._debugMode,
-				world: this,
-				name: "currentScene",
-				renderer: this._renderer	
-			};
-			
-			// Create the scene
-			scene.inject(myMap);
-			scene.create();
-			scene.ready();			
+		this._renderer.camera = this._currentScene.camera;
+		this._renderer.finish();
 
-			// Set the scene
-			this._currentScene = scene;
+		if(this._stats) {
+			this._stats.update();
 		}
+	},
+
+	// Starts running the game. This function will resume the game after it is paused
+	liftOff: function() {
+		if(!this._currentScene) {
+            throw ReferenceError("Houston, we have a problem. Rocket88 requires a scene before lifting off");
+            return false;
+        }
 		
-		// Returns the current scene
-		return this._currentScene;
-	},
-	
-	
-	origin: function(value)
-	{
-		if(value)
-		{
-			this._origin = value;
-			return this;
-		}
+		console.info("Houston, we have a lift off!");	 
 
-		return this._origin;
+		this._paused = false;
+		this.updateWithFixedTimestep();
+
+		return true;
 	},
 
+	// Pauses the game
+	land: function() {
+		this._paused = true;
+	},	
 
-	// The renderer of the game
-	renderer: function()
-	{
-		return this._renderer;
+	crash: function() {
+        if(this._crashed) {
+        	throw ReferenceError("Houston, we have a problem. Unable to crash Rocket88 game");	
+        	return false;
+        }
+
+		console.info("Houston, Rocket88 crashed to the ground");
+
+		this._currentScene.dispose();
+		Rocket88.assetStore.dispose();
+
+		this._currentScene 	= null;
+		this._currentTime 	= 0;
+		this._frame 		= 0;
+		this._paused 		= false;
+		this._renderer 		= null;
+		this._crashed		= true;
+
+		return true;
 	},
-	
-	
-	debugMode: function()
-	{
-		return this._debugMode;
-	}
+
+	// String representation of the game
+	toString: function() {
+		return "[" + this.type + " running=" + !this._paused + " crashed="+ this._crashed +"]";
+	},
 });

@@ -1,314 +1,195 @@
-/**
- * @author patrickpietens
- *
- */
-
-var Layer = EightyEightObject.extend({
-
-	// inheritDoc
-	init: function(name)
-	{	
+var Layer = Object88.extend({
+	init: function(name) {	
 		this._super(name);
 
 		// Private properties	
-		this._scene = null;
+		this._gameObjects 	 	= new LinkedList();
+		this._gameObjectsByName = new Object();
+		this._renderer 			= Rocket88.renderer;
 
-		this._objectList = new LinkedList();
-		this._objectSet = new Object();
-		
-		this._depth		= 0;
-		this._x 		= 0;
-		this._y 		= 0;
-        this._rotation  = 0;
-		this._scale		= 1;		
+		// Public properties
+		this.depth				= 0;
+		this.scene   			= undefined;
 
-		this._transformMatrix = new Matrix();
+		// Getters
+		this.__defineGetter__("type", function() { return "layer"; });
+		this.__defineGetter__("gameObjects", function() { return this._gameObject.toArray(); });
+		this.__defineGetter__("renderer", function() { return this._renderer; });
 	},
 
-	
-	// inheritDoc
-	inject: function(values)
-	{
-		this._super(values);
-		if(values)
-		{
-			this._scene = values.scene;
-		}
-	},
-	
-
-	// inheritDoc
-	ready: function()
-	{
+	ready: function() {
 		this._super();
 
-		var myNode = this._objectList.head();
-		while (myNode)
-		{
-			var myObject = myNode.userData;
-			myObject.ready();
+		var myNode = this._gameObjects.head;
+		while (myNode) {
+			var myGameObject = myNode.data;
+			myGameObject.ready();
+			
+			myNode = myNode.nextdata;
+		}		
+	},
+	
+	update: function() {
+		this._super();
+		this._renderer.renderedLayer = this;
+		
+		var myNode = this._gameObjects.head;
+		while (myNode) {
+			var myGameObject = myNode.data;
+			myGameObject.update();
 			
 			myNode = myNode.next;
 		}		
 	},
 	
-	
-	// inheritDoc
-	update: function()
-	{	
-		this._super();
-        var myCamera = this._scene.camera();
-
-		this._x = -1 * myCamera.x();
-		this._y = -1 * myCamera.y();
-        this._rotation = -1 * myCamera.rotation();
-		this._scale = myCamera.zoom();
-
-		if (this._depth != 0.0 && !myCamera.isStatic())
-		{
-			var myFocalLength = myCamera.focalLength();
-			this._scale = myFocalLength / ( myFocalLength + _depth );
-
-			this._x *= myScale;
-			this._y *= myScale;
+	// Adds a gameobject to the scene and places it on top of the stack
+	addGameObject: function(gameobject) {	
+		if(gameobject.isDisposed) {
+			console.assert(!Rocket88.showErrors, "Unable to add disposed gameobject: " + gameobject.name + " to layer: " + this.name);
+			return null;
 		}
 
-		var myNode = this._objectList.head();
-		while (myNode)
-		{
-			var myObject = myNode.userData;
-			myObject.update();
-			
-			myNode = myNode.next;
-		}		
+		// Fail if the gameobject doesn't have a unique name
+		if(this.hasGameObject(gameobject.name)) {
+			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobject.name + " to scene: " + this.name + " Required property 'name' must be unique");
+			return null;
+		}
+	    
+	    gameobject.layer = this;
+		if(this.isReady) {
+			gameobject.ready();
+		}
+
+		this._gameObjects.add(gameobject);
+		this._gameObjectsByName[gameobject.name] = gameobject;
+        
+        this.dispatch("gameObjectAdded", this, gameobject);
+
+        return gameobject;
 	},
-	
-	
-	// Adds a gameobject to the layer
-	addObject: function(gameObject)
-	{
-		this._setupObject(gameObject);
-		
-		// Add layers and notify listeners
-		this._objectList.add(gameObject);
-		this._objectSet[gameObject.name()] = gameObject;
-				
-		return gameObject;
-	},
-	
-	
-	// Inserts a gameobject above target object
-	insertObjectAbove: function(gameObject, above)
-	{
-		if(!this.hasObject(above))
-		{
+
+	addGameObjectAbove: function(gameobjectA, gameobjectB) {
+		if(this.hasGameObject(gameobjectB.name) ) {
+			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobjectA.name + " above gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
 			return false;
 		}
 		
-		// Get the corresponding layer
-		var myObject = this.getObject(above);
-		var myNode = this._objectList.nodeOf(myObject);
+		gameobjectA.scene = this;
+		if(this.isReady) {
+			gameobjectA.ready();
+		}
 
-		this._setupObject(gameObject);
+		this._gameObjects.insertAfter(gameobjectA, myNode);
+		this._gameObjectsByName[gameobjectA.name] = gameobjectA;
 		
-		// Add layers and notify listeners
-		this._objectList.insertBefore(gameObject, myNode);
-		this._objectSet[gameObject.name()] = gameObject;
+		this.dispatch("gameObjectAdded", this, gameobject);
 
 		return true;
 	},
-	
-	
-	// Inserts a gameobject underneath target object
-	insertObjectBelow: function(gameObject, below)
-	{
-		if(!this.hasObject(below))
-		{
+
+	addGameObjectBelow: function(gameobjectA, gameobjectB) {
+		if(this.hasgameObject(gameobjectB.name)) {
+			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobjectA.name + " below gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
 			return false;
 		}
 		
-		// Get the corresponding layer
-		var myObject = this.getObject(below);
-		var myNode = this._objectList.nodeOf(myObject);
+		gameobjectA.scene = this;
+		if(this.isReady) {
+			gameobjectA.ready();
+		}
 
-		this._setupObject(gameObject);
+		this._gameObjects.insertBefore(gameobjectA, myNode);
+		this._gameObjectsByName[gameobjectA.name] = gameobjectA;
 		
-		// Add layers and notify listeners
-		this._objectList.insertBefore(gameObject, myNode);
-		this._objectSet[gameObject.name()] = gameObject;
+		this.dispatch("gameObjectAdded", this, gameobject);
 
 		return true;
 	},
-	
-	
-	// Swap two gameobjects
-	swapObjects: function(nameA, nameB)
-	{
-		if(!this.hasObject(nameA) || !this.hasObject(nameB))
-		{
-			return false;
-		}
-		
-		var myObjectA = this.getObject(nameA);
-		var myNodeA = this._objectList.nodeOf(myObjectA);
 
-		var myObjectB = this.getObject(nameB);
-		var myNodeB = this._objectList.nodeOf(myObjectB);
-		
-		this._objectList.swap(myNodeA, myNodeB);
-	
-		return true;	
-	},
-	
-		
-	// Removes a gameobject from the layer
-	removeObject: function(name)
-	{
-		if(!this.hasObject(name))
-		{
+	swapGameObjects: function(gameobjectA, gameobjectB) {
+		if(!this.hasGameObject(gameobjectA.name) || !this.hasGameObject(gameobjectB.name)) {
+			console.assert(!Rocket88.showErrors, "Unable to swap gameobject: " + gameobjectA.name + " with gameobject:" + gameobjectB.name);
 			return false;
 		}
 		
-		// Get the corresponding layer
-		var myObject = this.getLayer(name);
+		var myNodeA = this._gameObjects.nodeOf(gameobjectA);
+		var myNodeB = this._gameObjects.nodeOf(gameobjectB);
+		this._gameObjects.swap(myNodeA, myNodeB);
+	
+		return true;		
+	},
+
+	// Removes a gameobject from the scene
+	removeGameObject: function(gameobject) {	
+		if(!this.hasGameObject(gameobject.name)) {
+			console.assert(!Rocket88.showErrors, "Unable to remove gameobject: " + gameobject.name + " from scene: " + this.name + " gameobject doesn't exists in layer: " + this.name);
+			return null;
+		}
 
 		// Remove from the scene
-		this._objectList.nodeOf(myObject).remove();
-		this._objectSet[name] = null;
-		
-		// Destroy layer
-		if(myObject.autoDestroy())
-		{
-			myObject.destroy();
+		this._gameObjects.nodeOf(gameobject).remove();
+		delete this._gameObjectsByName[gameobject.name];
+
+		// Destroy gameobject
+		if(gameobject.autoDispose) {
+			gameobject.dispose();
 		}
 
-		return myObject;	
+		this.dispatch("gameObjectRemoved", this, gameobject);
+
+		return gameobject;
 	},
-	
-	
-	// Remove all gameobjects from the layer
-	removeAllObjects: function ()
-	{
-		var myNode = this._objectList.head();
-		while (myNode)
-		{
-			var myObject = myNode.userData;
-			if(myObject.autoDestroy())
-			{
-				myObject.destroy();
+
+	// Remove all gameObjects from the scene
+	removeAllGameObjects: function(name) {
+		var myNode = this._gameObjects.head;
+		while (myNode) {
+
+			var myGameObject = myNode.data;
+
+			this.dispatch("gameObjectRemoved", this, myGameObject);
+			if(myGameObject.autoDispose) {
+				myGameObject.dispose();
 			}
-			
-			myNode = myNode.next;
+
+			var myNextNode = myNode.next;
+			this._gameObjects.remove(myNode);
+			myNode = myNextNode;
 		}
-		
-		this._objectList = new LinkedList();	
-		this._objectSet = new Object();	
-	},
-	
-	
-	// Removes the layer from the scene
-	removeFromScene: function()
-	{
-		this._scene.removeLayer(this.name());
-	},
-	
 
-	// Setups a gameobject
-	_setupObject: function(gameObject)
-	{
-		// Fail if the object doesn't have a unique name
-		if(this.hasObject(gameObject.name()))
-		{
-			console.error("Required property 'name' must be unique");
-			return null;			
+		this._gameObjectsByName = new Object();
+	},	
+
+	// Returns a gameObject by its name
+	gameObjectByName: function(name) {
+		return this._gameObjectsByName[name];
+	},
+
+	// Boolean indicating the scene has a gameObject
+	hasGameObject: function(name) {	
+		return this._gameObjectsByName[name] != null;
+	},
+
+	clone: function(name) {
+		var myLayer = new Layer(name);
+		myLayer.depth = this.depth;
+
+		var i = this.gameobjects.length;
+		while(--i > -1)	{
+			var myObject = this._gameObjects[i].clone();
+			myLayer.addGameObject(myObject);
 		}
-		
-		// Set injection map
-		var myMap = 
-		{
-			world: this.world(),
-			renderer: this.renderer(),
-			layer: this
-		};
 
-		// Inject properties
-		gameObject.inject(myMap);
-		gameObject.create();
-		
-		// If the object is ready notify the object
-		if(this.isReady())
-		{
-			gameObject.ready();
-		}		
+		return myLayer;
 	},
-	
-	
-	// Returns a list with all layers
-	gameObjects: function()
-	{
-		return this._objectList.toArray();
-	},
-	
-	
-	// Returns a gameobject by its name	
-	getObject: function(name)
-	{
-		return this._objectSet[name];
-	},
-	
-	
-	// Boolean indicating the layer has a gameobject
-	hasObject: function(name)
-	{
-		return this._objectSet[name] != null;
-	},
-	
-
-	// Reference to the parent scene
-	scene: function()
-	{
-		return this._scene;
-	},
-	
-	
-	// Signal object that notifies other objects when a gameobject is added
-	gameObjectAdded: function()
-	{
-		return this._objectAdded;
-	},
-
-
-	// Signal object that notifies other objects when a gameobject is removed		
-	gameObjectRemoved: function()
-	{
-		return this._objectRemoved;
-	},
-
-
-	transformMatrix: function()
-	{
-        return this._transformMatrix.
-            identity().
-            translate(this._x, this._y).
-            rotate(this._rotation * (Math.PI/180)).
-            scale(this._scale, this._scale);
-    },
-
 
 	// inheritDoc
-	destroy: function()
-	{
-		if(!this.isDestroyed())
-		{
-			this.removeAllObjects();
-						
-			this._objectList = null;
-			this._objectSet = null;
-			this._objectAdded = null;
-			this._objectRemoved = null;				
-		}
-		
+	dispose: function() {
 		this._super();	
+		this.removeAllGameObjects();
+					
+		this._gameObjects = null;
+		this._gameObjectsByName = null;		
+		this._renderer = null;
 	}
-	
 });

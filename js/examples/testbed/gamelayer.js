@@ -1,10 +1,8 @@
 var GameLayer = Layer.extend({
-
-	create: function()
-	{
+	ready: function() {
 		this._super();
 
-		var myPlayer = new Player("player");
-		this.addObject(myPlayer);
-	}
+		var myPlayer = new Player();
+		this.addGameObject(myPlayer);
+	},
 });

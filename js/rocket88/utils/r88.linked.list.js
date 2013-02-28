@@ -1,29 +1,29 @@
 var LinkedList = Class.extend({
 
-	init: function()
-	{
+	init: function() {
+
 		// Private properties
-		
 		this._head = null;
 		this._tail = null;
 		this._size = 0;
+
+		// Getters/setters
+		this.__defineGetter__("head", function(){ return this._head});
+		this.__defineGetter__("tail", function(){ return this._tail});		
+		this.__defineGetter__("size", function(){ return this._size});
 	},
 		
-	
-	// Adds node with userData to the list
-	add: function(userData)
-	{
+	add: function(data) {
+		// Adds node with data to the list
 		this._size++;	
 
-		var myNode = new LinkedListNode(userData, this);
-		if (this._head) 
-		{
+		var myNode = new LinkedListNode(data, this);
+		if (this._head)  {
 			myNode.prev = this._tail;
 			this._tail.next = myNode;
 			this._tail = myNode;
 		}
-		else 
-		{
+		else {
 			this._head = myNode;
 			this._tail = myNode;
 		}
@@ -31,15 +31,12 @@ var LinkedList = Class.extend({
 		return myNode;
 	},
 	
-	
-	// Inserts a node before another one
-	insertBefore: function(userData, node)
-	{
+	insertBefore: function(data, node) {
+		// Inserts a node before another one
 		this._size++;
 		
-		var myNode = new LinkedListNode(userData, this);
-		if (node==this._head)
-		{
+		var myNode = new LinkedListNode(data, this);
+		if (node==this._head) {
 			myNode.next = this._head;
 			this._head.prev = myNode;
 			this._head = myNode;
@@ -59,15 +56,12 @@ var LinkedList = Class.extend({
 		return myNode;
 	},
 	
-	
-	// Inserts a node 
-	insertAfter: function(userData, node)
-	{
+	insertAfter: function(data, node) {
+		// Inserts a node 
 		this._size++;
 		
-		var myNode = new LinkedListNode(userData, this);
-		if (node==this._tail)
-		{
+		var myNode = new LinkedListNode(data, this);
+		if (node==this._tail) {
 			this._tail.next = myNode;
 			this._tail = myNode;
 			
@@ -82,20 +76,15 @@ var LinkedList = Class.extend({
 		return myNode;
 	},	
 	
-	
-	// Removes a node from the list
-	remove: function(node)
-	{
-		// Remove head
-		if (node==this._head)
-		{
+	remove: function(node) {
+		// Removes a node from the list
+		if (node==this._head) {
 			this.shift();			
 			return true;
 		}
 		
 		// Remove tail
-		else if(node==this._tail)
-		{
+		else if(node==this._tail) {
 			this.pop();
 			return true;
 		}
@@ -108,24 +97,20 @@ var LinkedList = Class.extend({
 		myPrev.next = myNext;		
 		
 		this._size--;
-		
+		node.dispose();
+
 		return node;
 	},
 	
-	
-	// Removes the first node from the list
-	shift: function()
-	{
-		if (this._head)
-		{
+	shift: function() {
+		// Removes the first node from the list
+		if (this._head) {
 			this._size--;
-			if (this._head == this._tail)
-			{
+			if (this._head == this._tail) {
 				this._head = null;
 				this._tail = null;
 			}
-			else
-			{
+			else {
 				var myNode = this._head.next;
 				myNode.prev = null;
 				this._head = myNode;
@@ -135,20 +120,16 @@ var LinkedList = Class.extend({
 		return this._head;
 	},
 			
-	
-	// Removes the last node from the list
 	pop: function()
 	{
-		if (this._tail)
-		{
+		// Removes the last node from the list
+		if (this._tail) {
 			this._size--;
-			if (this._head == this._tail)
-			{
+			if (this._head == this._tail) {
 				this._head = null;
 				this._tail = null;
 			}
-			else
-			{
+			else {
 				var myNode = this._tail.prev;
 				myNode.next = null;
 				this._tail = myNode;
@@ -158,27 +139,19 @@ var LinkedList = Class.extend({
 		return this._tail;
 	},
 		
-		
-	swap: function(nodeA, nodeB)
-	{
-		var myUserDataA = nodeA.userData;
-		nodeA.userData = nodeB.userData;
-		nodeB.userData = myUserDataA;
-	//	this.insertBefore(nodeA, nodeB.next);
-	//	this.insertBefore(nodeB, nodeA.next);		
+	swap: function(nodeA, nodeB) {
+		var myDataA = nodeA.data;
+		nodeA.data = nodeB.data;
+		nodeB.data = myDataA;
 	},
 
-
-    sort: function(property)
-    {
+    sort: function(property) {
         var myNode = this._extensionList.head();
-        while (myNode)
-        {
-            var myExtension = myNode.userData;
+        while (myNode) {
+            var myExtension = myNode.data;
 
             // Destroy the extension
-            if(myExtension.autoDestroy())
-            {
+            if(myExtension.autoDestroy()) {
                 myExtension.destroy();
             }
 
@@ -186,15 +159,12 @@ var LinkedList = Class.extend({
         }
     },
 
-		
-	// Returns a boolean indication if a node exists for userData	
-	contains: function(userData)
+	// Returns a boolean indication if a node exists for data	
+	contains: function(data)
 	{
 		var myNode = this._head;
-		while (myNode)
-		{
-			if (myNode.userData == userData) 
-			{
+		while (myNode) {
+			if (myNode.data == data) {
 				return true;
 			}
 			
@@ -203,15 +173,21 @@ var LinkedList = Class.extend({
 		
 		return false;
 	},
-	
-					
-	nodeOf: function(userData)
+			
+	empty: function() {
+		var myNode = this.head;
+		while (myNode) {
+			var myNextNode = myNode.next;
+			this.remove(myNode);
+			myNode = myNextNode;
+		}
+	},
+
+	nodeOf: function(data)
 	{
 		var myNode = this._head
-		while (myNode)
-		{
-			if (myNode.userData == userData)
-			{
+		while (myNode) {
+			if (myNode.data == data) {
 				return myNode;
 			}
 				
@@ -221,65 +197,51 @@ var LinkedList = Class.extend({
 		return null;
 	},
 	
-		
-	size: function()
-	{
-		return this._size;
-	},
-	
-	
-	head: function()
-	{
-		return this._head;
-	},
-	
-
-	tail: function()
-	{
-		return this._tail;
-	},
-
-	
-	toArray: function()
-	{
+	toArray: function() {
 		var myArray = [];
 		
 		var myNode = this._head;
-		while (myNode)
-		{
-			myArray.push(myNode.userData);
+		while (myNode) {
+			myArray.push(myNode.data);
 			myNode = myNode.next;
 		}
 		
 		return myArray;
+	},
+
+	empty: function() {
+
 	}
 });
 
 
 var LinkedListNode = Class.extend({
 
-	init: function(userData, list)
-	{
+	init: function(data, list) {
+
 		// Private proeprties
 		this._list = list;
-		this._id = new Date().getTime();
 		
 		// Public properties
-		this.userData = userData;
+		this.data = data;
 		this.next = null;
 		this.prev = null;
+
+		// Getters/setters
+		this.__defineGetter__("list", function() { return this._list });
 	},
 		
 	
 	// Removes the node from its parent list
-	remove: function()
-	{
+	remove: function() {
 		this._list.remove(this);
 	},
-	
-	
-	list: function()
-	{
-		return this._list;
+
+	dispose: function () {
+		this._list = null;
+
+		this.data = null;
+		this.next = null;
+		this.prev = null;
 	}
 });

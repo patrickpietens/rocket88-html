@@ -1,242 +1,189 @@
-/**
- * @author patrickpietens
- *
- */
- 
-var GameObject = EightyEightObject.extend({
-	
+var GameObject = Object88.extend({
 	// inheritDoc
-	init: function(name, group)
-	{
+	init: function(name) {
 		this._super(name);
 
-		this._layer = null;	
-		this._group = group || "no_name";
-		
-		this._extensionList = new LinkedList();
-		this._extensionSet = new Object();		
+		// Private properties
+		this._components 		= new LinkedList();
+		this._componentsByName 	= new Object();		
+		this._transform			= new Transform();
+		this._graphic			= new Graphic();
+		this._renderer 			= Rocket88.renderer;
+
+		// Public properties
+		this.layer 				= null;	
+
+		// Getters
+		this.__defineGetter__("type", function() { return "gameobject"; });
+		this.__defineGetter__("components", function() { return this._components.toArray(); });
+		this.__defineGetter__("transform", function() { return this._transform; });
+		this.__defineGetter__("graphic", function() { return this._graphic; });	
+		this.__defineGetter__("renderer", function() { return this._renderer; });	
+
+		this._transform.gameobject 	= this;
+		this._graphic.gameobject 	= this;
+
+		this._transform.addListener("propertyChanged", delegate(this, this.onTransform ));
+
+		this._transform.ready();
+		this._graphic.ready();
 	},
-	
-	
+			
 	// inheritDoc
-	create: function()
-	{
-		this._super();
-	
-		this.addExtension(new GraphicExtension());
-		this.addExtension(new TransformExtension());
-	},
-	
-	
-	// inheritDoc
-	inject: function(values)
-	{
-		this._super(values);	
-		if(values)
-		{
-			this._layer = values.layer;
-		}		
-	},
-	
-	
-	// inheritDoc
-	ready: function()
-	{
+	ready: function() {
 		this._super();
 		
-		var myNode = this._extensionList.head();
-		while (myNode)
-		{
-			var myExtension = myNode.userData;
-			myExtension.ready();
+		var myNode = this._components.head;
+		while (myNode) {
+			var myComponent = myNode.data;
+			myComponent.ready();
 			
 			myNode = myNode.next;
 		}		
+
+		this._transform.ready();
+		this._graphic.ready();
 	},
 	
-	
 	// inheritDoc
-	update: function()
-	{
+	update: function() {
 		this._super();
-		
-		var myNode = this._extensionList.head();
-		while (myNode)
-		{
-			var myExtension = myNode.userData;
-			if(myExtension.enabled())
-			{
-				myExtension.update();
+	
+		// Set the current gameobject of the renderer
+		this._renderer.renderedGameObject = this;
+				
+		// Update all attached components
+		var myNode = this._components.head;
+		while (myNode) {
+			var myComponent = myNode.data;
+			if(myComponent.enabled) {
+				myComponent.update();
 			}
 			
 			myNode = myNode.next;
 		}		
+		// Update transformation if physics components is available
+		var myPhysics = this.componentByName("physics");
+		if(myPhysics) {
+			this._transform.position.x = myPhysics.body.GetPosition().x * 30;
+			this._transform.position.y = myPhysics.body.GetPosition().y * 30;
+			this._transform.rotation = myPhysics.body.GetAngle() * 180/Math.PI;
+		}
+
+		this._transform.update();
+		this._graphic.update();
+	},
+
+	onTransform : function(property, newValue) {
+		var myPhysics = this.componentByName("physics");
+		if(myPhysics) {
+			//console.assert(!Rocket88.showErrors, "Do not change the Transform Component of a GameObjects directly. Use the Physics Component instead.");
+		}
 	},
 	
-	
-	// Adds an extension to the GameObject
-	addExtension: function(extension)
-	{
-		this._setupExtension(extension);
-		
-		// Add layers and notify listeners
-		this._extensionList.add(extension);
-		this._extensionSet[extension.name()] = extension;
+	// Adds an component to the gameobject
+	addComponent: function(component) {
+		if(component.isDisposed) {
+			console.assert(!Rocket88.showErrors, "Unable to add disposed component: " + component.name + " to gameobject: " + this.name);
+			return null;
+		}
+
+		if(this.hasComponent(component.name)) {
+			console.assert(!Rocket88.showErrors, "Unable to add component: " + component.name + " to gameobject: " + this.name + " Required property 'name' must be unique");
+			return null;
+		}
+
+		component.gameobject = this;
+		if(this.isReady) {
+			component.ready();
+		}	
+
+		// Add components and notify listeners
+		this._components.add(component);
+		this._componentsByName[component.name] = component;
 				
-		return extension;
+		this.dispatch("componentAdded", this, component);
+
+		return component;
 	},
 	
-	
-	// Removes an extension from the GameObject
-	removeExtension: function(name)
-	{
-		if(!this.hasExtension(name))
-		{
+	// Removes an component from the GameObject
+	removeComponent: function(component) {
+		if(!this.hasComponent(component.name)) {
 			return false;
 		}
 		
-		// Get the corresponding layer
-		var myExtension = this.getExtension(name);
-
-		// Remove from the scene
-		this._objectList.nodeOf(myExtension).remove();
-		this._objectSet[name] = null;
+		this._objectList.nodeOf(component).remove();
+		delete this._objectSet[component.name];
 		
-		// Destroy layer
-		if(myExtension.autoDestroy())
-		{
-			myExtension.destroy();
+		if(myComponent.autoDispose) {
+			myComponent.dispose();
 		}
-		
-		// Notify
-		this._extensionRemoved.dispatch(myExtension);
-		
+
+		this.dispatch("componentRemoved", this, component);
+				
 		return myObject;	
-	
 	},
 	
-	
-	// Removes all extensions from the GameObject
-	removeAllExtension: function()
+	// Removes all components from the GameObject
+	removeAllComponents: function()
 	{
-		var myNode = this._extensionList.head();
-		while (myNode)
-		{
-			var myExtension = myNode.userData;
+		var myNode = this._components.head;
+		while (myNode) {
+			var myComponent = myNode.data;
 			
-			// Destroy the extension
-			if(myExtension.autoDestroy())
-			{
-				myExtension.destroy();
+			this.dispatch("componentRemoved", this, myComponent);
+
+			// Destroy the component
+			if(myComponent.autoDispose) {
+				myComponent.dispose();
 			}
 			
 			myNode = myNode.next;
 		}
 		
-		this._extensionList = new LinkedList();
-		this._extensionSet = new Object();	
+		this._components = new LinkedList();
+		this._componentsByName = new Object();	
 	},
-	
-	
-	// Removes the GameObject from its parent layer	
-	removeFromLayer: function()
-	{
+				
+	// Boolean indicating the component has a gameobject
+	hasComponent: function(name) {
+		return this._componentsByName[name]!=null;
 	},
-	
-	
-	// Setups an extension
-	_setupExtension: function(extension)
-	{
-		// Fail if the object doesn't have a unique name
-		if(this.hasExtension(extension.name()))
-		{
-			console.error("Required property 'name' must be unique");
-			return null;			
-		}
 		
-		// Set injection map
-		var myMap = 
-		{
-			world: this.world(),
-			renderer: this.renderer(),
-			gameObject: this
-		};
-
-		// Inject properties
-		extension.inject(myMap);
-		extension.create();
-		
-		// If the object is ready notify the object
-		if(this.isReady())
-		{
-			extension.ready();
-		}	
-	},
-	
-	
-	// Returns an array with all extensions
-	extensions: function()
-	{
-		return this._extesionList.toArray();
-	},
-	
-	
 	// Returns a gameobject by its name	
-	getExtension: function(name)
-	{
-		return this._extensionSet[name];
-	},
-	
-	
-	// Boolean indicating the layer has a gameobject
-	hasExtension: function(name)
-	{
-		return this._extensionSet[name] != null;
-	},
-		
-	
-	// Returns the frame extension
-	transform: function()
-	{
-		return this._extensionSet["transform"];	
-	},
-	
-	
-	// Returns the graphics extension
-	graphic: function()
-	{
-		return this._extensionSet["graphic"];
-	},
-	
-	
-	// Returns the parent layer of the GameObject
-	layer: function()
-	{
-		return this._layer;
-	},
-	
-	
-	// Returns the group of the GameObject
-	group: function()
-	{
-		return this._group;
+	componentByName: function(name) {
+		return this._componentsByName[name];
 	},
 
+	clone: function(name) {
+		var myGameObject = new Layer(name);
+
+		var i = this._components.length;
+		while(--i > -1)	{
+			var myComponent = this._components[i].clone();
+			myGameObject.addComponent(myComponent);
+		}
+
+		return myGameObject;
+	},	
 	
 	// inheritDoc
-	destroy: function()
-	{
-		if(!this.isDestroyed())
-		{
-			this.removeAllExtensions();
+	dispose: function() {
+		this._super();
 
-            this._layer = null;
-            this._group = null;
+		this.removeListener("propertyChanged", this.onTransform );
 
-			this._extensionList = null;
-			this._extensionSet = null;
-		}
-		
-		this._super();	
+		this._graphic.dispose();
+		this._transform.dispose();
+		this.removeAllComponents();
+
+		this._components = null;
+		this._componentsByName = null;
+		this._graphic = null;
+		this._transform = null;
+		this._renderer = null;
+
+		this.layer = null;
 	}
 });

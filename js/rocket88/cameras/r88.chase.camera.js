@@ -5,14 +5,14 @@
 
 var ChaseCamera = Camera.extend({
 
-    // inheritDoc
-    init: function()
-    {
-        this._super();
+    init: function(target) {
+        // inheritDoc
+        this._super("ChaseCamera");
 
-        this._isStatic = false;
-        this._damping = 1.0;
-        this._target = null;
+        // Public properties
+        this.isStatic = false;
+        this.damping = 1.0;
+        this.target = target;
     },
 
 
@@ -26,13 +26,13 @@ var ChaseCamera = Camera.extend({
             return;
         }
 
-        var myX = this._target.transform().x();
-        var myY = this._target.transform().y();
+        var myX = this.target.transform().x();
+        var myY = this.target.transform().y();
 
-        if (myX > this._x + this._viewport.right())
+        if (myX > this.x + this.viewport.right())
         {
             myX -= _roamingArea.right();
-            this._x += (myX - this._x) * this._damping;
+            this.x += (myX - this._x) * this._damping;
         }
         else if (myX < this._x + this._viewport.left())
         {

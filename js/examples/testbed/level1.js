@@ -1,26 +1,8 @@
-/**
- * @author patrickpietens
- *
- */
- 
 var Level1 = Scene.extend({
+	ready: function(name) {
+		this._super(name);
 
-	// Constructor
-	create: function()	
-	{
-		this._super();
-
-		var myLayer = new GameLayer("gamelayer");
-		this.addLayer(myLayer);
-
-        var myCamera = new ChaseCamera();
-        this.camera(myCamera);
-    },
-	
-	
-	// inheritDoc
-	ready: function()
-	{
-		this._super();
-	}
+		var myLayer1 = new GameLayer();
+		this.addLayer(myLayer1);
+	},
 });

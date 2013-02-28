@@ -1,303 +1,79 @@
-/**
- * @author patrickpietens
- *
- */
- 
 var Sprite = Class.extend({
 
 	// inheritDoc
-	init: function()
-	{
-		this._image 			= null;
-		this._spritesheet 		= null;
+	init: function(url, spritesheet) {
 
-		this._x 				= 0;
-		this._y 				= 0;
-		this._width				= 0;
-		this._height			= 0;
-		this._rotation			= 0;
-		this._scaleX			= 1;
-		this._scaleY			= 1;
-
-		this._horizontalFlipped = false;
-		this._verticalFlipped 	= false;
-		this._tiled 			= false;
-
-		this._originalSize		= new Size();
-		this._bounds 			= new Rectangle();
-		this._cropRect 			= new Rectangle();
-		this._anchorPoint		= new Point(0.5, 0.5);
-		this._transformMatrix	= new Matrix();
-	},
-
-
-	createWithImage: function(image)
-	{
-		if(!this._image && !this._spritesheet)
-		{
-			this._image 	= image;
-
-			this._width		= this._image.width;
-			this._height	= this._image.height;
-
-			this._cropRect 	= new Rectangle(0, 0, this._width, this._height);
-			this._originalSize = new Size(this._width, this._height);
+		if(!url) {
+			console.assert(!Rocket88.showErrors, "Required argument 'url' is missing");
+			return;
 		}
-	},
 
+		// Private properties
+		this._assetStore	= Rocket88.assetStore;
+		this._currentFrame	= undefined;
+		this._disposed 		= false;
+		this._spritesheet	= spritesheet;
+		this._url	 		= url;
 
-	createWithSpritesheet: function(spritesheet)
-	{
-		if(!this._image && !this._spritesheet)
-		{
-			this._spritesheet = spritesheet;
-			this._image = this._spritesheet.image();
+		//this._bounds		= new Rectangle;
+		this._size			= new Size();
+		this._transform		= new Transform();
 
-			var myFrame = this._spritesheet.firstFrame();
-			this._setFrame(myFrame);
+		// Public properties
+		this.cropRect 		= undefined;
+		this.className		= undefined;
+		this.alpha			= 1.0;	
+		this.tiled 			= false;
+
+		// Getters/Setters
+		this.__defineGetter__("currentFrame", function() { return this._currentFrame; });
+		this.__defineGetter__("disposed", function() { return this._disposed; });
+		this.__defineGetter__("spritesheet", function() { return this._spritesheet; });
+		this.__defineGetter__("size", function() { return this._size; });
+		this.__defineGetter__("transform", function() { return this._transform; });
+		this.__defineGetter__("url", function() { return this._url; });
+
+		if(this._assetStore.hasAsset(url)) {
+		}
+
+		if(this._spritesheet) {
+			this._size = this._spritesheet.firstFrame.size.clone();
+			this.cropRect = this._spritesheet.firstFrame.clone();
 		}
 	},
 	
+	update: function() {
 
-	_setFrame: function(frame)
-	{
-		this._width = frame.size().width();
-		this._height = frame.size().height();
-
-		this._cropRect 	= frame.clone(); 
-		this._originalSize = new Size(this._width, this._height);
-	},
-
-	
-	update: function()
-	{
-		this._bounds.origin().x((-1 / this._scaleX) * this._anchorPoint.x() * this._width);
-		this._bounds.origin().y((-1 / this._scaleY) * this._anchorPoint.y() * this._height);
-
-		this._bounds.size().width(this._width);
-		this._bounds.size().height(this._height);
-	},
-
-
-	showFrame: function(name)
-	{
-		if(this._spritesheet)
-		{
-			var myFrame = this._spritesheet.getFrame(name);
-			this._cropRect = myFrame.clone();
-
-			this._bounds = myFrame.clone();
-			this._bounds.center();
-		}
-	},
-
-
-	cropRect: function(value)
-	{
-		if(value)
-		{
-			this._cropRect = value;
-			return this;
-		}
-
-		return this._cropRect;
-	},
-
-
-	x: function(value)
-	{		
-		if(value)
-		{
-			this._x = value;
-			return this;
-		}
-
-		return this._x;
-	},
-
-
-	y: function(value)
-	{
-		if(value)
-		{
-			this._y = value;
-			return this;
-		}
-
-		return this._y;
-	},
-
-
-	width: function(value)
-	{		
-		if(value)
-		{
-			this._width = value;
-			if(!this._tiled)
-			{
-				this._scaleX = value / this._originalSize.width();
-			}
-
-			return this;
-		}
-
-		return this._width;
-	},
-
-
-	height: function(value)
-	{
-		if(value)
-		{
-			this._height = value;
-			if(!this._tiled)
-			{
-				this._scaleY = value / this._originalSize.height();
-			}
-
-			return this;
-		}
-
-		return this._height;
-	},
-
-
-	rotate: function(degrees)
-	{
-		if(degrees)
-		{
-			this._rotation = degrees;
-			return this;
-		}
-
-		return this._rotation;
-	},
-
-
-	scaleX: function(value)
-	{
-		if(value)
-		{
-			if(!this._tiled)
-			{
-				this._scaleX = value;
-				this._width = this._originalSize.width() * value;	
-			}
-			
-			return this;
-		}
-
-		return this._scaleX;
-	},
-
-
-	scaleY: function(value)
-	{
-		if(value)
-		{
-			if(!this._tiled)
-			{
-				this._scaleY = value;
-				this._height = this._originalSize.height() * value;
-			}
-
-			return this;
-		}
-
-		return this._scaleY;
-	},
-
-
-	flipHorizontal: function(value)
-	{
-		if(value!=undefined)
-		{
-			this._horizontalFlipped = value;
-			return this;
-		}
-
-		return this._horizontalFlipped;
-	},
-
-	
-	flipVertical: function(value)
-	{
-		if(value!=undefined)
-		{
-			this._verticalFlipped = value;
-			return this;
-		}
-
-		return this._verticalFlipped;
-	},
-
-
-	tile: function(value)
-	{
-		if(value!=undefined)
-		{
-			this._tiled = value;
-			if(this._tiled)
-			{
-				this._scaleX = 1;
-				this._scaleY = 1;
-			}
-			else
-			{
-				this._scaleX = this._width / this._originalSize.width();
-				this._scaleY = this._height / this._originalSize.height();
-			}
-
-			return this;
-		}
-
-		return this._tiled;
-	},
-
-
-	image: function()
-	{
-		return this._image;
 	},
 	
-
-	spritesheet: function()
-	{
-		return this._spritesheet;
-	},
-
-
-	anchorPoint: function(value)
-	{
-		if(value)
-		{
-			this._anchorPoint = value;
-			return this;
+	showFrame: function(name) {
+		if(!this._spritesheet && Rocket88.showWarnings) {
+			console.error("Unable to set frame on sprite: " + this._url + " Sprite doesn't have spritesheet");
 		}
 
-		return this._anchorPoint;
+		var myFrame = this._spritesheet.frameByName(name);
+		this.cropRect = myFrame.clone();
 	},
 
-
-	transformMatrix: function()
-	{
-		var myLeft 	= this._bounds.origin().x();
-		var myTop	= this._bounds.origin().y();
-
-		var myFlipX = this._horizontalFlipped ? -1 : 1;
-		var myFlipY = this._verticalFlipped ? -1 : 1;
-
-		return this._transformMatrix.
-							identity().
-							translate(this._x, this._y).
-							rotate(this._rotation * (Math.PI/180)).
-							scale(this._scaleX, this._scaleY).
-							scale(myFlipX, myFlipY);
+	toCss: function() {
+		return "-moz-opacity:" + this.alpha + ";-webkit-opacity:" + this.alpha + ";-o-opacity:" + this.alpha + ";opacity:" + this.alpha + ";";
 	},
 
+	dispose: function () {
+        if(this._disposed && Rocket88.showErrors) {
+        	console.error("Unable to dispose object: " + this.name);	
+        }
 
-	bounds: function()
-	{
-		return this._bounds;
-	},
+		console.info("sprite: " + this._url + " is disposed");	
+
+		this._disposed = true;
+		this._assetStore = null;
+		this._url = null;
+		this._size = null;
+		this._spritesheet = null;
+		this._transform = null;
+
+		this.className = null;
+		this.cropRect = null;
+	}
 });
