@@ -1,4 +1,4 @@
-var Player = PhysicsObject.extend({
+var Player = InteractiveObject.extend({
 
 	init: function() {
 		this._super("player");
@@ -246,10 +246,41 @@ var Player = PhysicsObject.extend({
 		this.graphic.sprite = new AnimatedSprite("js/examples/testbed/images/data.png", mySheet);
 		this.graphic.sprite.play("Untitled");
 
-		this.physics.addBox(new Size(50, 65));
-
 		this.transform.x = 250;
 		this.transform.degrees = 35;
 		this.transform.scale = 0.5;	
+		this.transform.flipX();
+
+		this.physics.addBox(new Size(50, 65));
+
+		this.keys.onLeftArrow = delegate(this, this.onLeftArrow);
+		this.keys.onRightArrow = delegate(this, this.onRightArrow);
+		this.keys.onSpacebar = delegate(this, this.onSpacebar);
+
+		this.collision.onCollision = delegate(this, this.onCollision);
+	},
+
+	onLeftArrow: function(direction) {
+		if(direction=="down") {
+			console.log("onLeftArrow");
+		}
+	},
+
+	onRightArrow: function(direction) {
+		if(direction=="down") {
+			console.log("onRightArrow");
+		}
+	},
+
+	onSpacebar: function(direction) {
+		if(direction=="down") {
+			if(this.collision.hasContact("ground"))
+			{
+			}
+		}
+	},
+
+	onCollision: function(gameobject, position, impact) {
+		console.log("onCollision");
 	}
 });

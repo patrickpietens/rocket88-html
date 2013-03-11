@@ -8,6 +8,8 @@ var CollisionSolver = Class.extend({
 		this._listener = new b2ContactListener();
 
 		this._listener.BeginContact = delegate(this, this.beginContact);
+		this._listener.EndContact = delegate(this, this.endContact);
+
 		this._listener.PreSolve = delegate(this, this.preSolve);
 		this._listener.PostSolve = delegate(this, this.postSolve);
 
@@ -28,6 +30,27 @@ var CollisionSolver = Class.extend({
 
 			myCollision = [myGameObjectA, myGameObjectB];;
 			this._collisions[myName] = myCollision;
+
+			if(myGameObjectA.collision.enabled) {
+				myGameObjectA.collision.beginContact(myGameObjectB);
+			}
+
+			if(myGameObjectB.collision.enabled) {
+				myGameObjectB.collision.beginContact(myGameObjectA);
+			}
+		}
+	},
+
+	endContact: function(contact) {
+		var myGameObjectA = contact.GetFixtureA().GetUserData(),
+			myGameObjectB = contact.GetFixtureB().GetUserData();
+
+		if(myGameObjectA.collision.enabled) {
+			myGameObjectA.collision.endContact(myGameObjectB);
+		}
+
+		if(myGameObjectB.collision.enabled) {
+			myGameObjectB.collision.endContact(myGameObjectA);
 		}
 	},
 	

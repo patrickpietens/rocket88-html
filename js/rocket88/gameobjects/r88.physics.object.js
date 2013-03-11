@@ -1,4 +1,5 @@
 var PhysicsObject = GameObject.extend({
+	
 	init: function(name) {
 		this._super(name);
 
