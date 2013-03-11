@@ -6,7 +6,7 @@ var Camera = Object88.extend({
         this._super(name);
 
         // Private properties
-        this._transform  = new Transform();
+        this._transform  = new TransformComponent();
 
         // Public properties
         this.isStatic    = true;

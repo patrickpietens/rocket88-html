@@ -20,7 +20,8 @@ var CanvasRenderer = Renderer.extend({
 		this._super();
 		
 		// Setup debug drawing
-		if(Rocket88.debugMode) {
+		var myDirector = Director.getInstance();
+		if(myDirector.debugMode) {
 			this.backgroundColor = "#cccccc";
 
 			var myDebugDraw = new b2DebugDraw();
@@ -29,7 +30,9 @@ var CanvasRenderer = Renderer.extend({
 			myDebugDraw.SetFillAlpha(1.0);
 			myDebugDraw.SetLineThickness(1.0);
 			myDebugDraw.SetFlags(b2DebugDraw.e_shapeBit|b2DebugDraw.e_jointBit);
-			Rocket88.scene.world.SetDebugDraw(myDebugDraw);		
+			
+			var myDirector = Director.getInstance();
+			myDirector.scene.world.SetDebugDraw(myDebugDraw);		
 		}
 	},
 
@@ -51,8 +54,11 @@ var CanvasRenderer = Renderer.extend({
 	draw: function(sprite) {
 		this._super(sprite);
 
-		if(!Rocket88.assetStore.hasAsset(sprite.url)) {
-			console.assert(!Rocket88.showErrors, "Unable to find sprite:" + sprite.url + " at the AssetStore");
+		var myDirector = Director.getInstance();
+		var myAssetStore = AssetStore.getInstance();
+
+		if(!myAssetStore.hasAsset(sprite.url)) {
+			console.assert(!myDirector.showErrors, "Unable to find sprite:" + sprite.url + " at the AssetStore");
 			return;
 		}
 
@@ -75,7 +81,7 @@ var CanvasRenderer = Renderer.extend({
 		
 		this._context.globalAlpha = sprite.alpha;
 
-		var myImage = Rocket88.assetStore.assetForPath(sprite.url);
+		var myImage = myAssetStore.assetForPath(sprite.url);
 		this._context.drawImage(
 			myImage, 		
 		

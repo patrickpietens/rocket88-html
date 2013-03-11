@@ -5,9 +5,6 @@ var HTMLRenderer = Renderer.extend({
 		if(target.tagName.toLowerCase()!="div") {
 			throw new ReferenceError("Required property 'target' must be a div object");
 		}
-
-		// Public properties
-		this.useExternalStyles = false;
 	},
 
 	prepare: function() {

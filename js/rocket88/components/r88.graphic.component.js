@@ -1,10 +1,9 @@
- var Graphic = Component.extend({
+ var GraphicComponent = Component.extend({
 
 	init: function() {
 		this._super("graphic");
 	
 		// Private properties
-		this._renderer 		= Rocket88.renderer;
 		this._sprite 		= undefined;	
 
 		// Getters/setters
@@ -24,9 +23,14 @@
 	},
 	
 	update: function() {
-		this._super();		
-		this._sprite.update();
-		this._renderer.draw(this._sprite);
+		this._super();	
+
+		if(this._sprite) {
+			this._sprite.update();
+
+			var myRenderer = Director.getInstance().renderer;
+			myRenderer.draw(this._sprite);			
+		}	
 	},
 
 	dispose: function() {

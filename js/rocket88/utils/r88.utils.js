@@ -1,5 +1,5 @@
-var parseRadiansToDegrees = function(radians) { return radians*180/Math.PI };
-var parseDegreesToRadians = function(degrees) { return Math.PI/180*degrees };
+var radiansToDegrees = function(radians) { return radians*180/Math.PI };
+var degreesToRadians = function(degrees) { return Math.PI/180*degrees };
 
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 window.requestAnimationFrame = (function()

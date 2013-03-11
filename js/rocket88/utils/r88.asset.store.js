@@ -1,6 +1,12 @@
 var AssetStore = Class.extend({
 
 	init: function() {
+		if(AssetStore.instance) {
+			throw ReferenceError("Houston, we have a problem. AssetStore is a singleton class. Use the static getInstance() method to get a reference.");
+		}
+
+		AssetStore.instance = this;
+
 		// Private properties
 		this._disposed = false;
 		this._assets = new Object();
@@ -64,3 +70,12 @@ var AssetStore = Class.extend({
 		this._assets = null;
 	}
 });
+
+AssetStore.getInstance = function() {
+	var myInstance = AssetStore.instance;
+	if(myInstance==undefined) {
+		myInstance = new AssetStore();
+	}
+
+	return myInstance;
+}

@@ -18,7 +18,7 @@ var AnimatedSprite = Sprite.extend({
 		this._super(url, spritesheet);
 
 		// Private properties
-		this._currentAnimation	= null;
+		this._currentAnimation	= undefined;
 		this._running			= false;
 
 		// Public properties

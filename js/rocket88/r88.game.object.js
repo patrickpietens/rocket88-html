@@ -6,9 +6,12 @@ var GameObject = Object88.extend({
 		// Private properties
 		this._components 		= new LinkedList();
 		this._componentsByName 	= new Object();		
-		this._transform			= new Transform();
-		this._graphic			= new Graphic();
-		this._renderer 			= Rocket88.renderer;
+
+		this._transform			= new TransformComponent();
+		this._transform.gameobject = this;
+
+		this._graphic			 = new GraphicComponent();
+		this._graphic.gameobject = this;
 
 		// Public properties
 		this.layer 				= null;	
@@ -18,15 +21,6 @@ var GameObject = Object88.extend({
 		this.__defineGetter__("components", function() { return this._components.toArray(); });
 		this.__defineGetter__("transform", function() { return this._transform; });
 		this.__defineGetter__("graphic", function() { return this._graphic; });	
-		this.__defineGetter__("renderer", function() { return this._renderer; });	
-
-		this._transform.gameobject 	= this;
-		this._graphic.gameobject 	= this;
-
-		this._transform.addListener("propertyChanged", delegate(this, this.onTransform ));
-
-		this._transform.ready();
-		this._graphic.ready();
 	},
 			
 	// inheritDoc
@@ -39,7 +33,7 @@ var GameObject = Object88.extend({
 			myComponent.ready();
 			
 			myNode = myNode.next;
-		}		
+		}	
 
 		this._transform.ready();
 		this._graphic.ready();
@@ -50,7 +44,8 @@ var GameObject = Object88.extend({
 		this._super();
 	
 		// Set the current gameobject of the renderer
-		this._renderer.renderedGameObject = this;
+		var myRenderer = this.director.renderer;
+		myRenderer.renderedGameObject = this;
 				
 		// Update all attached components
 		var myNode = this._components.head;
@@ -62,34 +57,21 @@ var GameObject = Object88.extend({
 			
 			myNode = myNode.next;
 		}		
-		// Update transformation if physics components is available
-		var myPhysics = this.componentByName("physics");
-		if(myPhysics) {
-			this._transform.position.x = myPhysics.body.GetPosition().x * 30;
-			this._transform.position.y = myPhysics.body.GetPosition().y * 30;
-			this._transform.rotation = myPhysics.body.GetAngle() * 180/Math.PI;
-		}
 
 		this._transform.update();
 		this._graphic.update();
 	},
 
-	onTransform : function(property, newValue) {
-		var myPhysics = this.componentByName("physics");
-		if(myPhysics) {
-			//console.assert(!Rocket88.showErrors, "Do not change the Transform Component of a GameObjects directly. Use the Physics Component instead.");
-		}
-	},
 	
 	// Adds an component to the gameobject
 	addComponent: function(component) {
 		if(component.isDisposed) {
-			console.assert(!Rocket88.showErrors, "Unable to add disposed component: " + component.name + " to gameobject: " + this.name);
+			console.assert(!this.director.showErrors, "Unable to add disposed component: " + component.name + " to gameobject: " + this.name);
 			return null;
 		}
 
 		if(this.hasComponent(component.name)) {
-			console.assert(!Rocket88.showErrors, "Unable to add component: " + component.name + " to gameobject: " + this.name + " Required property 'name' must be unique");
+			console.assert(!this.director.showErrors, "Unable to add component: " + component.name + " to gameobject: " + this.name + " Required property 'name' must be unique");
 			return null;
 		}
 
@@ -102,11 +84,14 @@ var GameObject = Object88.extend({
 		this._components.add(component);
 		this._componentsByName[component.name] = component;
 				
-		this.dispatch("componentAdded", this, component);
+		this.onComponentAdded(component);
 
 		return component;
 	},
 	
+	onComponentAdded: function(component) {
+	},
+
 	// Removes an component from the GameObject
 	removeComponent: function(component) {
 		if(!this.hasComponent(component.name)) {
@@ -120,19 +105,18 @@ var GameObject = Object88.extend({
 			myComponent.dispose();
 		}
 
-		this.dispatch("componentRemoved", this, component);
+		this.onComponentRemoved(component);
 				
 		return myObject;	
 	},
 	
 	// Removes all components from the GameObject
-	removeAllComponents: function()
-	{
+	removeAllComponents: function() {
 		var myNode = this._components.head;
 		while (myNode) {
+
 			var myComponent = myNode.data;
-			
-			this.dispatch("componentRemoved", this, myComponent);
+			this.onComponentRemoved(myComponent);
 
 			// Destroy the component
 			if(myComponent.autoDispose) {
@@ -145,6 +129,9 @@ var GameObject = Object88.extend({
 		this._components = new LinkedList();
 		this._componentsByName = new Object();	
 	},
+
+	onComponentRemoved: function(component) {
+	},
 				
 	// Boolean indicating the component has a gameobject
 	hasComponent: function(name) {
@@ -152,8 +139,22 @@ var GameObject = Object88.extend({
 	},
 		
 	// Returns a gameobject by its name	
-	componentByName: function(name) {
+	getComponentByName: function(name) {
 		return this._componentsByName[name];
+	},
+
+	getComponentByTag: function(tag) {
+		var myNode = this._layers.head;
+		while (myNode) {
+			var myComponent = myNode.data;
+			if(myComponent.tag!=0 && myComponent.tag==tag) {
+				return myComponent;
+			}
+
+			myNode = myNode.next;
+		}
+
+		return undefined;
 	},
 
 	clone: function(name) {
@@ -171,8 +172,6 @@ var GameObject = Object88.extend({
 	// inheritDoc
 	dispose: function() {
 		this._super();
-
-		this.removeListener("propertyChanged", this.onTransform );
 
 		this._graphic.dispose();
 		this._transform.dispose();

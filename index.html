@@ -29,23 +29,24 @@
 	<script src="js/examples/testbed/player.js"></script>
 	
 	<script>
-		// Create renderers
-		var myRenderer = new CanvasRenderer(document.getElementById("game"));		
-		//var myRenderer = new HTMLRenderer(document.getElementById("game"));
+		// Initialize the director
+		var myDirector = Director.getInstance();
 
-		// Initialize game engine
-		var myGame = new Rocket88(myRenderer, true);
-
-		// Add scene to the game engine
-		myGame.scene = new Level1();
+		// Add scene
+		myDirector.scene = new Level1();
+		
+		// Add renderer
+		myDirector.renderer = new CanvasRenderer(document.getElementById("game"));		
+		//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
 
 		var myImage = new Image();
 		myImage.src = "js/examples/testbed/images/data.png";
 		myImage.onload = function() {
-			Rocket88.assetStore.addAsset(this, "js/examples/testbed/images/data.png");
+
+			AssetStore.getInstance().addAsset(this, "js/examples/testbed/images/data.png");
 
 			// We have a lift off!
-			myGame.liftOff();	
+			myDirector.liftOff();	
 		}
 		
 		// Crashes the game

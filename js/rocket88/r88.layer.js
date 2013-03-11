@@ -1,11 +1,11 @@
 var Layer = Object88.extend({
+
 	init: function(name) {	
 		this._super(name);
 
 		// Private properties	
 		this._gameObjects 	 	= new LinkedList();
 		this._gameObjectsByName = new Object();
-		this._renderer 			= Rocket88.renderer;
 
 		// Public properties
 		this.depth				= 0;
@@ -14,7 +14,6 @@ var Layer = Object88.extend({
 		// Getters
 		this.__defineGetter__("type", function() { return "layer"; });
 		this.__defineGetter__("gameObjects", function() { return this._gameObject.toArray(); });
-		this.__defineGetter__("renderer", function() { return this._renderer; });
 	},
 
 	ready: function() {
@@ -31,7 +30,9 @@ var Layer = Object88.extend({
 	
 	update: function() {
 		this._super();
-		this._renderer.renderedLayer = this;
+
+		var myRenderer = this.director.renderer;
+		myRenderer.renderedLayer = this;
 		
 		var myNode = this._gameObjects.head;
 		while (myNode) {
@@ -45,13 +46,13 @@ var Layer = Object88.extend({
 	// Adds a gameobject to the scene and places it on top of the stack
 	addGameObject: function(gameobject) {	
 		if(gameobject.isDisposed) {
-			console.assert(!Rocket88.showErrors, "Unable to add disposed gameobject: " + gameobject.name + " to layer: " + this.name);
+			console.assert(!this.director.showErrors, "Unable to add disposed gameobject: " + gameobject.name + " to layer: " + this.name);
 			return null;
 		}
 
 		// Fail if the gameobject doesn't have a unique name
 		if(this.hasGameObject(gameobject.name)) {
-			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobject.name + " to scene: " + this.name + " Required property 'name' must be unique");
+			console.assert(!this.director.showErrors, "Unable to add gameobject: " + gameobject.name + " to scene: " + this.name + " Required property 'name' must be unique");
 			return null;
 		}
 	    
@@ -63,14 +64,14 @@ var Layer = Object88.extend({
 		this._gameObjects.add(gameobject);
 		this._gameObjectsByName[gameobject.name] = gameobject;
         
-        this.dispatch("gameObjectAdded", this, gameobject);
+        this.onGameObjectAdded(gameobject);
 
         return gameobject;
 	},
 
 	addGameObjectAbove: function(gameobjectA, gameobjectB) {
 		if(this.hasGameObject(gameobjectB.name) ) {
-			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobjectA.name + " above gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
+			console.assert(!this.director.showErrors, "Unable to add gameobject: " + gameobjectA.name + " above gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
 			return false;
 		}
 		
@@ -82,14 +83,14 @@ var Layer = Object88.extend({
 		this._gameObjects.insertAfter(gameobjectA, myNode);
 		this._gameObjectsByName[gameobjectA.name] = gameobjectA;
 		
-		this.dispatch("gameObjectAdded", this, gameobject);
+        this.onGameObjectAdded(gameobject);
 
 		return true;
 	},
 
 	addGameObjectBelow: function(gameobjectA, gameobjectB) {
 		if(this.hasgameObject(gameobjectB.name)) {
-			console.assert(!Rocket88.showErrors, "Unable to add gameobject: " + gameobjectA.name + " below gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
+			console.assert(!this.director.showErrors, "Unable to add gameobject: " + gameobjectA.name + " below gameobject: " + gameobjectB.name + " The latter doesn't exists in layer: " + this.name);
 			return false;
 		}
 		
@@ -101,14 +102,17 @@ var Layer = Object88.extend({
 		this._gameObjects.insertBefore(gameobjectA, myNode);
 		this._gameObjectsByName[gameobjectA.name] = gameobjectA;
 		
-		this.dispatch("gameObjectAdded", this, gameobject);
+        this.onGameObjectAdded(gameobject);
 
 		return true;
 	},
 
+	onGameObjectAdded: function(gameobject) {
+	},
+
 	swapGameObjects: function(gameobjectA, gameobjectB) {
 		if(!this.hasGameObject(gameobjectA.name) || !this.hasGameObject(gameobjectB.name)) {
-			console.assert(!Rocket88.showErrors, "Unable to swap gameobject: " + gameobjectA.name + " with gameobject:" + gameobjectB.name);
+			console.assert(!this.director.showErrors, "Unable to swap gameobject: " + gameobjectA.name + " with gameobject:" + gameobjectB.name);
 			return false;
 		}
 		
@@ -122,7 +126,7 @@ var Layer = Object88.extend({
 	// Removes a gameobject from the scene
 	removeGameObject: function(gameobject) {	
 		if(!this.hasGameObject(gameobject.name)) {
-			console.assert(!Rocket88.showErrors, "Unable to remove gameobject: " + gameobject.name + " from scene: " + this.name + " gameobject doesn't exists in layer: " + this.name);
+			console.assert(!this.director.showErrors, "Unable to remove gameobject: " + gameobject.name + " from scene: " + this.name + " gameobject doesn't exists in layer: " + this.name);
 			return null;
 		}
 
@@ -135,7 +139,7 @@ var Layer = Object88.extend({
 			gameobject.dispose();
 		}
 
-		this.dispatch("gameObjectRemoved", this, gameobject);
+		this.onGameObjectRemoved(gameobject);
 
 		return gameobject;
 	},
@@ -146,8 +150,8 @@ var Layer = Object88.extend({
 		while (myNode) {
 
 			var myGameObject = myNode.data;
+			this.onGameObjectRemoved(myGameObject);
 
-			this.dispatch("gameObjectRemoved", this, myGameObject);
 			if(myGameObject.autoDispose) {
 				myGameObject.dispose();
 			}
@@ -160,9 +164,26 @@ var Layer = Object88.extend({
 		this._gameObjectsByName = new Object();
 	},	
 
+	onGameObjectRemoved: function(gameobject) {
+	},
+
 	// Returns a gameObject by its name
-	gameObjectByName: function(name) {
+	getGameObjectByName: function(name) {
 		return this._gameObjectsByName[name];
+	},
+
+	getGameObjectByTag: function(tag) {
+		var myNode = this._gameObjects.head;
+		while (myNode) {
+			var myGameObject = myNode.data;
+			if(myGameObject.tag!=0 && myGameObject.tag==tag) {
+				return myGameObject;
+			}
+
+			myNode = myNode.next;
+		}
+
+		return undefined;
 	},
 
 	// Boolean indicating the scene has a gameObject

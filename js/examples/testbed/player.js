@@ -1,7 +1,10 @@
-var Player = GameObject.extend({
+var Player = PhysicsObject.extend({
 
-	ready: function()
-	{
+	init: function() {
+		this._super("player");
+	},
+
+	ready: function() {
 		this._super();
 		var myData = {"frames": {
 
@@ -243,11 +246,10 @@ var Player = GameObject.extend({
 		this.graphic.sprite = new AnimatedSprite("js/examples/testbed/images/data.png", mySheet);
 		this.graphic.sprite.play("Untitled");
 
-		this.transform.x = 400;
-		this.transform.rotation = Math.PI * 0.2;
-		this.transform.scale = 0.5;	
+		this.physics.addBox(new Size(50, 65));
 
-		var myPhysics = this.addComponent(new Physics());
-		myPhysics.setAsBox(new Size(50, 50));
+		this.transform.x = 250;
+		this.transform.degrees = 35;
+		this.transform.scale = 0.5;	
 	}
 });

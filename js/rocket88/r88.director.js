@@ -1,10 +1,12 @@
-var Rocket88 = Class.extend({
+var Director = Class.extend({
 
 	// Executes when the object is instantiated
-	init: function(renderer, debugMode) {		
-		if(!renderer) {
-			throw ReferenceError("Houston, we have a problem. Required argument 'renderer' is missing");
+	init: function(debugMode) {		
+		if(Director.instance) {
+			throw ReferenceError("Houston, we have a problem. Director is a singleton class. Use the static getInstance() method to get a reference.");
 		}
+
+		Director.instance = this;
 
 		// Author information
 		this.version = "0.1",
@@ -21,8 +23,6 @@ var Rocket88 = Class.extend({
 			document.body.appendChild(this._stats.domElement);			
 		}
 
-		Rocket88 = this;
-
 		// Private properties
 		this._accumulator 	= 0;
 		this._crashed		= false;
@@ -31,23 +31,29 @@ var Rocket88 = Class.extend({
 		this._frame 		= 0;
 		this._frameTime 	= 1000 / 60;
 		this._paused 		= false;
+		this._renderer 		= undefined;		
 
-		this._assetStore 	= new AssetStore();
-		this._renderer 		= renderer;
-		
 		// Public properties
 		this.debugMode	 	= debugMode;
 		this.showWarnings 	= debugMode;
 		this.showErrors	 	= debugMode;
 
-	    // Getters
+	    // Getters/setters
 		this.__defineGetter__("type", function(){ return "Rocket88" });
 		this.__defineGetter__("assetStore", function(){ return this._assetStore });
 		this.__defineGetter__("crashed", function(){ return this._crashed });
-		this.__defineGetter__("renderer", function(){ return this._renderer });
-		this.__defineGetter__("scene", function(){ return this._currentScene });
 
 		// Setters
+		this.__defineGetter__("renderer", function(){ return this._renderer });		
+		this.__defineSetter__("renderer", function(renderer) {
+			if(this._renderer) {
+				console.assert(!this.showErrors, "Renderer already added");
+			}
+			
+			this._renderer = renderer;
+		});
+
+		this.__defineGetter__("scene", function(){ return this._currentScene });
 		this.__defineSetter__("scene", function(scene) {
 			
 			// Destroy previous scene
@@ -55,12 +61,8 @@ var Rocket88 = Class.extend({
 				this._currentScene.destroy();
 			}
 			
-			// Create the scene
-			scene.ready();			
-
 			// Set the scene
 			this._currentScene = scene;
-			this._renderer.ready();
 		});
 	},
 		
@@ -102,10 +104,18 @@ var Rocket88 = Class.extend({
 	// Starts running the game. This function will resume the game after it is paused
 	liftOff: function() {
 		if(!this._currentScene) {
-            throw ReferenceError("Houston, we have a problem. Rocket88 requires a scene before lifting off");
+            throw ReferenceError("Houston, we have a problem. Required argument 'scene' is missing");
             return false;
         }
+
+		if(!this._renderer) {
+			throw ReferenceError("Houston, we have a problem. Required argument 'renderer' is missing");
+			return false;
+		}
 		
+		this._currentScene.ready();
+		this._renderer.ready();
+
 		console.info("Houston, we have a lift off!");	 
 
 		this._paused = false;
@@ -128,7 +138,9 @@ var Rocket88 = Class.extend({
 		console.info("Houston, Rocket88 crashed to the ground");
 
 		this._currentScene.dispose();
-		Rocket88.assetStore.dispose();
+		
+		AssetStore.getInstance().dispose();
+		AssetLoader.getInstance().dispose();
 
 		this._currentScene 	= null;
 		this._currentTime 	= 0;
@@ -145,3 +157,12 @@ var Rocket88 = Class.extend({
 		return "[" + this.type + " running=" + !this._paused + " crashed="+ this._crashed +"]";
 	},
 });
+
+Director.getInstance = function() {
+	var myInstance = Director.instance;
+	if(myInstance==undefined) {
+		myInstance = new Director(true);
+	}
+
+	return myInstance;
+}

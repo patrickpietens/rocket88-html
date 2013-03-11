@@ -9,7 +9,6 @@ var Sprite = Class.extend({
 		}
 
 		// Private properties
-		this._assetStore	= Rocket88.assetStore;
 		this._currentFrame	= undefined;
 		this._disposed 		= false;
 		this._spritesheet	= spritesheet;
@@ -17,7 +16,7 @@ var Sprite = Class.extend({
 
 		//this._bounds		= new Rectangle;
 		this._size			= new Size();
-		this._transform		= new Transform();
+		this._transform		= new TransformComponent();
 
 		// Public properties
 		this.cropRect 		= undefined;
@@ -32,9 +31,6 @@ var Sprite = Class.extend({
 		this.__defineGetter__("size", function() { return this._size; });
 		this.__defineGetter__("transform", function() { return this._transform; });
 		this.__defineGetter__("url", function() { return this._url; });
-
-		if(this._assetStore.hasAsset(url)) {
-		}
 
 		if(this._spritesheet) {
 			this._size = this._spritesheet.firstFrame.size.clone();
@@ -67,7 +63,6 @@ var Sprite = Class.extend({
 		console.info("sprite: " + this._url + " is disposed");	
 
 		this._disposed = true;
-		this._assetStore = null;
 		this._url = null;
 		this._size = null;
 		this._spritesheet = null;

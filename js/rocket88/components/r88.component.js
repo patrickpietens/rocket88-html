@@ -14,6 +14,9 @@ var Component = Object88.extend({
 		this.__defineGetter__("enabled", function() { return this._enabled; });
 	},
 	
+	ready: function() {
+	},
+
 	enable: function () {
 		this._enabled = true;
 	},
