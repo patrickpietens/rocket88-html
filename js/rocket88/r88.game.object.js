@@ -14,7 +14,8 @@ var GameObject = Object88.extend({
 		this._graphic.gameobject = this;
 
 		// Public properties
-		this.layer 				= null;	
+		this.layer 				= undefined;
+		this.group				= undefined;
 
 		// Getters
 		this.__defineGetter__("type", function() { return "gameobject"; });

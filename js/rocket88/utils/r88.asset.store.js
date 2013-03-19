@@ -24,12 +24,12 @@ var AssetStore = Class.extend({
 	},
 
 	addAsset: function(asset, path) {
-		if(this.hasAsset(path) && Rocket88.showErrors) {
+		if(this.hasAsset(path)) {
 			console.error("Unable to add asset: " + path + " to AssetStore. Asset already exists.");
 			return;
 		}
 
-		if(!asset && Rocket88.showErrors) {
+		if(!asset) {
 			console.error("Unable to add asset: " + path + " to AssetStore. Asset cannot be undefined.");
 			return;			
 		}
@@ -58,7 +58,7 @@ var AssetStore = Class.extend({
 	},
 
 	dispose: function() {
-        if(this._disposed && Rocket88.showErrors) {
+        if(this._disposed) {
         	console.error("Unable to dispose object: " + this.name);	
         }
 

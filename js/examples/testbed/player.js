@@ -253,30 +253,13 @@ var Player = InteractiveObject.extend({
 
 		this.physics.addBox(new Size(50, 65));
 
-		this.keys.onLeftArrow = delegate(this, this.onLeftArrow);
-		this.keys.onRightArrow = delegate(this, this.onRightArrow);
-		this.keys.onSpacebar = delegate(this, this.onSpacebar);
-
 		this.collision.onCollision = delegate(this, this.onCollision);
 	},
 
-	onLeftArrow: function(direction) {
-		if(direction=="down") {
-			console.log("onLeftArrow");
-		}
-	},
-
-	onRightArrow: function(direction) {
-		if(direction=="down") {
-			console.log("onRightArrow");
-		}
-	},
-
-	onSpacebar: function(direction) {
-		if(direction=="down") {
-			if(this.collision.hasContact("ground"))
-			{
-			}
+	update: function() {
+		this._super();
+		if(this.keys.keyIsDown(32) && this.collision.touches("ground")) {
+			console.log("jump");
 		}
 	},
 

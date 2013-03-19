@@ -39,16 +39,17 @@
 		myDirector.renderer = new CanvasRenderer(document.getElementById("game"));		
 		//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
 
-		var myImage = new Image();
-		myImage.src = "js/examples/testbed/images/data.png";
-		myImage.onload = function() {
-
-			AssetStore.getInstance().addAsset(this, "js/examples/testbed/images/data.png");
-
-			// We have a lift off!
-			myDirector.liftOff();	
+		var myLoader = AssetLoader.getInstance();
+		myLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
+		myLoader.onAsset = function () {
 		}
-		
+
+		myLoader.onComplete = function() {
+			myDirector.liftOff();
+		}
+
+		myLoader.downloadAssets();
+
 		// Crashes the game
 		//myGame.crash();
 	</script>

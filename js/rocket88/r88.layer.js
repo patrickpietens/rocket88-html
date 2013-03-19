@@ -8,7 +8,7 @@ var Layer = Object88.extend({
 		this._gameObjectsByName = new Object();
 
 		// Public properties
-		this.depth				= 0;
+		this.z					= 0;
 		this.scene   			= undefined;
 
 		// Getters

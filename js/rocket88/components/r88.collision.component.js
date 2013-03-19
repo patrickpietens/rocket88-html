@@ -2,22 +2,34 @@
 
 	init: function() {
 		this._super("collision");
-		this._contacts = {};
+
+		this._contacts = "";
+		this._groups = "";
 	},
 
 	beginContact: function(gameobject) {
-		this._contacts[gameobject.name] = gameobject; 
+		this._contacts += "|" + gameobject.name; 
+		if(gameobject.group) {
+			this._groups += "|" + gameobject.group;
+		}
 	},
 
 	endContact: function(gameobject) {
-		delete this._contacts[gameobject.name];
+		this._contacts = this._contacts.replace("|" + gameobject.name, ""); 
+		if(gameobject.group) {
+			this._groups = this._groups.replace("|" + gameobject.group, ""); 
+		}
 	},
 
 	onCollision: function(gameobject, position, impact) {
 	},
 
-	hasContact: function(name) {
-		return this._contacts[name]!=undefined;
+	touches: function(name) {
+		return this._contacts.indexOf(name) > -1;
+	},
+
+	touchesGroup: function(name) {
+		return this._groups.indexOf(name) > -1;
 	},
 
 	dispose: function() {
