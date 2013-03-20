@@ -29,29 +29,20 @@
 	<script src="js/examples/testbed/player.js"></script>
 	
 	<script>
-		// Initialize the director
-		var myDirector = Director.getInstance();
-		
-		// Add scene
-		myDirector.scene = new Level1();
-		
-		// Add renderer
-		myDirector.renderer = new CanvasRenderer(document.getElementById("game"));		
-		//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
 
-		var myLoader = AssetLoader.getInstance();
-		myLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
-		myLoader.onAsset = function () {
+		// Preload assets need to run the game
+		rocket88.assetLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
+		rocket88.assetLoader.downloadAll();
+
+		rocket88.assetLoader.onComplete = function() {
+			rocket88.director.scene = new Level1(); // Add scene to the game
+			rocket88.director.renderer = new rocket88.CanvasRenderer(document.getElementById("game")); // Set renderer of the game
+			//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
+			
+			rocket88.director.liftOff(); // Start the game when all assets are loaded
 		}
 
-		myLoader.onComplete = function() {
-			myDirector.liftOff();
-		}
-
-		myLoader.downloadAssets();
-
-		// Crashes the game
-		//myGame.crash();
+		
 	</script>
 
 </body>

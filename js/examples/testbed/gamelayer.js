@@ -1,16 +1,15 @@
-var GameLayer = Layer.extend({
+var GameLayer = rocket88.Layer.extend({
 	ready: function() {
 		this._super();
 
-		this._player = this.addGameObject(new Player());
-		this._ground = this.addGameObject(new PhysicsObject("ground"));
-		
-		this._ground.physics.addBox(new Size(500, 10));
-		this._ground.physics.isStatic = true;
+		this.player = this.addGameObject(new Player());
+		this.ground = this.addGameObject(new rocket88.PhysicsObject("ground"));		
 
-		this._ground.transform.x = 250;
-		this._ground.transform.y = 200;
-
-		this._ground.collision.disable();
+		this.ground.group = 2;
+		this.ground.collisions.disable();
+		this.ground.physics.addBox(new rocket88.Size(2000, 10));
+		this.ground.physics.isStatic = true;
+		this.ground.transform.x = 1000;
+		this.ground.transform.y = 300;
 	},
 });
