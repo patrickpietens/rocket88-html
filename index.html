@@ -1,8 +1,6 @@
 <!doctype html>
-<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -20,8 +18,8 @@
 	<canvas id="game" width="800" height="600"></canvas>
 	<!--<div id="game" style="position:relative;top:0;left:0;width:800px;height:600px;overflow:hidden;background-color:rgb(240,240,240);"></div>-->
 
-	<script src="js/externals/Box2d.min.js"></script>
 	<script src="js/externals/stats.min.js"></script>
+	<script src="js/externals/Box2d.min.js"></script>
 	<script src="js/eightyeight.min.js"></script>
 	
 	<script src="js/examples/testbed/level1.js"></script>
@@ -29,20 +27,18 @@
 	<script src="js/examples/testbed/player.js"></script>
 	
 	<script>
+		var myLoader = rocket88.assetLoader;
+		myLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
+		myLoader.downloadAll();
 
-		// Preload assets need to run the game
-		rocket88.assetLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
-		rocket88.assetLoader.downloadAll();
-
-		rocket88.assetLoader.onComplete = function() {
-			rocket88.director.scene = new Level1(); // Add scene to the game
-			rocket88.director.renderer = new rocket88.CanvasRenderer(document.getElementById("game")); // Set renderer of the game
+		myLoader.onComplete = function() {
+			var myDirector = rocket88.director;
 			//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
+			myDirector.renderer = new rocket88.CanvasRenderer(document.getElementById("game"));
+			myDirector.scene = new Level1();
 			
-			rocket88.director.liftOff(); // Start the game when all assets are loaded
+			myDirector.liftOff();
 		}
-
-		
 	</script>
 
 </body>

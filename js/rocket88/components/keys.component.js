@@ -1,7 +1,7 @@
 rocket88.KeysComponent = rocket88.Component.extend({
 
 	init: function() {
-		this._super("keys");
+		this._super("keys.component");
 		this.pressedKeys = "";
 
 		document.onkeydown = delegate(this, function(event) {

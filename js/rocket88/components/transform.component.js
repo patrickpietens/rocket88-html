@@ -1,7 +1,7 @@
 rocket88.TransformComponent = rocket88.Component.extend({
 
 	init: function() {
-		this._super("transform");		
+		this._super("transform.component");		
 
 		// Public properties
 		this.origin 	= new rocket88.Point(0, 0);		

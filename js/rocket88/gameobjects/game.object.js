@@ -1,4 +1,4 @@
-rocket88.GameObject = rocket88.Object88.extend({
+rocket88.GameObject = rocket88.EventDispatcher.extend({
 
 	// inheritDoc
 	init: function(name) {

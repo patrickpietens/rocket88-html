@@ -1,11 +1,12 @@
-rocket88.Director = Class.extend({
+rocket88.Director = rocket88.EventDispatcher.extend({
 
 	// Executes when the object is instantiated
 	init: function(debugMode) {		
+		this._super("director");
+
 		if(rocket88.director) {
 			throw ReferenceError("Houston, we have a problem. Director is a singleton class. Use rocket88.director to get a reference.");
 		}
-
 		console.log("This game utilises the Rocket88 engine v" + rocket88.version);
 
 		if(debugMode) {

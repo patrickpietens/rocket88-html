@@ -2,7 +2,7 @@ var b2Vec2	= b2Vec2 || Box2D.Common.Math.b2Vec2,
 	b2World	= b2World || Box2D.Dynamics.b2World;
 
 rocket88.Scene = rocket88.Object88.extend({
-	// Executes when the object is instantiated
+	
 	init: function(name) {
 		this._super(name);
 
@@ -18,16 +18,28 @@ rocket88.Scene = rocket88.Object88.extend({
 		this._world.SetContactListener(this._collisionSolver.listener);
 
 		// Public properties
-		this.camera 		= new rocket88.Camera();
+		this._camera 		= new rocket88.Camera();
 
 		// Getters/setters
 		this.__defineGetter__("type", function() { return "scene"; });
 		this.__defineGetter__("layers", function() { return this._layers.toArray(); });
 		this.__defineGetter__("world", function() { return this._world; });
+		
+		this.__defineGetter__("camera", function() { return this._camera; });
+		this.__defineSetter__("camera", function(camera) {			
+			if(this._camera) {
+				this._camera.dispose();
+			}
 
-		this.__defineGetter__("gravity", function() { return this._layers.toArray(); });
+			this._camera = camera;
+		});
+
+		this.__defineGetter__("gravity", function() { return this._gravity; });
 		this.__defineGetter__("gravity", function(gravity) { 
-			return this._gravity; 
+			this._gravity = gravity;
+
+			var myGravity = new b2Vec2(0, this._gravity);
+			this._world.SetGravity(myGravity, true);
 		});	
 	},
 
@@ -60,7 +72,7 @@ rocket88.Scene = rocket88.Object88.extend({
 			this._world.DrawDebugData();
 		}
 
-        this.camera.update();
+        this._camera.update();
 
 		var myNode = this._layers.head;
 		while (myNode) {
@@ -221,7 +233,7 @@ rocket88.Scene = rocket88.Object88.extend({
 
 	clone: function(name) {
 		var myScene = new Scene();
-		myScene.camera = this.camera.clone();
+		myScene.camera = this._camera.clone();
 
 		var i = this.layers.length;
 		while(--i > -1)	{

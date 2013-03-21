@@ -1,6 +1,7 @@
-rocket88.EventDispatcher = Class.extend({
+rocket88.EventDispatcher = rocket88.Object88.extend({
 
 	init: function(name) {
+		this._super(name);
 		this._events = {};
 	},
 
@@ -48,8 +49,8 @@ rocket88.EventDispatcher = Class.extend({
 		}
 	},
 
-	// Destroys the object
-	dispose: function() {       
+	dispose: function() {   
+		this._super();
 		this._events = null;
     },
 });

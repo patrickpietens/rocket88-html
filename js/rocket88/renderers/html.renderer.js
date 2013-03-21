@@ -1,6 +1,6 @@
 rocket88.HTMLRenderer = rocket88.Renderer.extend({
 	init: function(target) {
-		this._super(target);
+		this._super("html.renderer", target);
 
 		if(target.tagName.toLowerCase()!="div") {
 			throw new ReferenceError("Required property 'target' must be a div object");

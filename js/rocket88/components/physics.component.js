@@ -8,7 +8,7 @@ var b2Vec2 			= b2Vec2 || Box2D.Common.Math.b2Vec2,
 rocket88.PhysicsComponent = rocket88.Component.extend({
 
 	init: function() {
-		this._super("physics");		
+		this._super("physics.component");		
 
 		// Private properties
 		this._body 			= undefined;

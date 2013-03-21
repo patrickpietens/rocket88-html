@@ -1,6 +1,8 @@
 rocket88.ChaseCamera = rocket88.Camera.extend({
 
     init: function(target) {
+        this._super("chase.camera");
+
         if(target==undefined) {
             throw ReferenceError("Required parameter 'target' is missing");
         }
@@ -13,7 +15,6 @@ rocket88.ChaseCamera = rocket88.Camera.extend({
         this.target = target;
     },
 
-
     update: function() {
         this._super();
 
@@ -22,11 +23,11 @@ rocket88.ChaseCamera = rocket88.Camera.extend({
 
         if (myX > this.x + this.viewport.right) {
             myX -= _roamingArea.right;
-            this._position.x += (myX - this.position.x) * this.damping;
+            this.position.x += (myX - this.position.x) * this.damping;
         }
         else if (myX < this.position.x + this.viewport.left) {
             myX -= this.viewport.left;
-            this._position.x += (myX - this.position.x) * this.damping;
+            this.position.x += (myX - this.position.x) * this.damping;
         }
 
         if (myY > this.position.y + this._viewport.bottom) {
@@ -39,10 +40,8 @@ rocket88.ChaseCamera = rocket88.Camera.extend({
         }
     },
 
-    damping: function(value)
-    {
-        if(damping)
-        {
+    damping: function(value) {
+        if(damping) {
             this._damping = value;
             return this;
         }
@@ -51,10 +50,8 @@ rocket88.ChaseCamera = rocket88.Camera.extend({
     },
 
 
-    target: function(value)
-    {
-        if(value)
-        {
+    target: function(value) {
+        if(value) {
             this._target = value;
             return this;
         }
@@ -63,8 +60,7 @@ rocket88.ChaseCamera = rocket88.Camera.extend({
     },
 
 
-    dispose: function()
-    {
+    dispose: function() {
         this._super();
         this._target = null;
     }

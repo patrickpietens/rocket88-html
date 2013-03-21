@@ -1,4 +1,4 @@
-rocket88.Layer = rocket88.Object88.extend({
+rocket88.Layer = rocket88.EventDispatcher.extend({
 
 	init: function(name) {	
 		this._super(name);

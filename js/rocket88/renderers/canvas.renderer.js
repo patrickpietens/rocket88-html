@@ -1,9 +1,9 @@
-var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+var b2DebugDraw = b2DebugDraw || Box2D.Dynamics.b2DebugDraw;
 
 rocket88.CanvasRenderer = rocket88.Renderer.extend({
 
 	init: function(target) {
-		this._super(target);
+		this._super("canvas.renderer", target);
 
 		if(target.tagName.toLowerCase()!="canvas") {
 			throw ReferenceError("Required property 'target' must be a canvas object");

@@ -2,7 +2,6 @@ rocket88.Sprite = Class.extend({
 
 	// inheritDoc
 	init: function(url, spritesheet) {
-
 		if(!url) {
 			console.assert(!Rocket88.showErrors, "Required argument 'url' is missing");
 			return;
@@ -39,7 +38,6 @@ rocket88.Sprite = Class.extend({
 	},
 	
 	update: function() {
-
 	},
 	
 	showFrame: function(name) {

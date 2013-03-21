@@ -1,7 +1,7 @@
 rocket88.GraphicComponent = rocket88.Component.extend({
 
 	init: function() {
-		this._super("graphic");
+		this._super("graphic.component");
 	
 		// Private properties
 		this._sprite 		= undefined;	

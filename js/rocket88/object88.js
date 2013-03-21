@@ -1,9 +1,7 @@
-rocket88.Object88 = rocket88.EventDispatcher.extend({
+rocket88.Object88 = Class.extend({
 
 	// Executes when the object is instantiated
 	init: function(name) {
-		this._super();
-
 		// Private properties
 		this._createdAt 	= new Date().getTime();
 		this._name 			= name || "unnamed" + Math.round((Math.random() * this._createdAt));
@@ -25,10 +23,7 @@ rocket88.Object88 = rocket88.EventDispatcher.extend({
 	// All properties are injected and set and the game is ready to run.
 	ready: function() {
 		this._ready = true;
-
 		console.info(this.type + ": " + this._name + " is ready");	
-
-		this.dispatch("ready", this);
 	},
 	
 	// Executes every render tick
@@ -51,13 +46,10 @@ rocket88.Object88 = rocket88.EventDispatcher.extend({
 
 	// Destroys the object
 	dispose: function() {
-		this._super();
-		
         if(this._disposed) {
         	console.assert(!Rocket88.showErrors, "Unable to dispose object: " + this.name);	
         }
 
-		this.dispatch("disposed", this);
 		console.info(this.type + ": " + this._name + " is disposed");	
 		
 		this._assetStore = null;	

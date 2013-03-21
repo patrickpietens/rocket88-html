@@ -1,4 +1,4 @@
-rocket88.Camera = rocket88.Object88.extend({
+rocket88.Camera = rocket88.EventDispatcher.extend({
 
     // Executes when the object is instantiated
     init: function(name)

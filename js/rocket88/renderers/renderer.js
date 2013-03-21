@@ -1,5 +1,7 @@
-rocket88.Renderer = Class.extend({
-	init: function(target) {
+rocket88.Renderer = rocket88.EventDispatcher.extend({
+	init: function(name, target) {
+		this._super(name);
+
 		if(target==undefined) {
 			throw ReferenceError("Required parameter 'target' is missing");
 		}

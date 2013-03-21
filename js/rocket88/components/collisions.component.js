@@ -1,7 +1,7 @@
 rocket88.CollisionComponent = rocket88.Component.extend({
 
 	init: function() {
-		this._super("collision");
+		this._super("collision.component");
 
 		this._contacts = "";
 		this._groups = 0;
