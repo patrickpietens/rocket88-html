@@ -1,39 +1,58 @@
-rocket88.GraphicComponent = rocket88.Component.extend({
+(function(rocket88) {
+	"use strict";
 
-	init: function() {
-		this._super("graphic.component");
-	
-		// Private properties
-		this._sprite 		= undefined;	
+	rocket88.GraphicComponent = rocket88.Component.extends({
+		init: function(name) {
+			this._super(name || "graphic.component");
+			
+			this.needsRender = false;
+			this.visible = true;
 
-		// Getters/setters
-		this.__defineGetter__("renderer", function() { return this._renderer });
-		this.__defineGetter__("sprite", function() { return this._sprite });
-		this.__defineSetter__("sprite", function(sprite) { 
-			if(this._sprite) {
-				console.warn ("Replacing sprite: " + this._sprite.name + " with sprite: " + sprite.name)
+			this._sprite = undefined;
+		},
+		
 
-				if(this._sprite.autoDispose) {
-					this._sprite.dispose();
-				}
+		update: function() {
+			this._super();	
+			if(!!this._sprite) {
+				this._sprite.update();
+			}	
+		},
+
+
+		dispose: function() {
+			this._super();
+			if(this._sprite && this._sprite.autoDispose) {
+				this._sprite.dispose();
 			}
 
-			this._sprite = sprite 
-		});
-	},
-	
-	update: function() {
-		this._super();	
+			delete this._sprite;
+		},
 
-		if(this._sprite) {
-			this._sprite.update();
-			rocket88.director.renderer.draw(this._sprite);			
-		}	
-	},
 
-	dispose: function() {
-		this._super();
-		this._sprite.dispose();
-		this._sprite = null;
-	}
-});
+	    defineProperties: function() {
+	    	this._super();
+
+			var myProperties = {
+				needsDisplay: {
+					enumerable: true, 
+					get: function() { return this._needDisplay; }
+				},
+
+		    	sprite: {
+					enumerable: true, 
+		    		get: function() { return this._sprite; },
+		    		set: function(sprite) {
+						if(!!this._sprite && this._sprite.autoDispose) {
+							this._sprite.dispose();
+						}
+
+						this._sprite = sprite 	    			
+		    		}
+		    	}				
+			};
+
+			Object.defineProperties(this, myProperties);
+		},
+	});
+})( use("rocket88") );

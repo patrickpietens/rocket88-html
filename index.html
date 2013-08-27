@@ -8,9 +8,19 @@
 	<base href="./">
 
 	<title></title>
+	
 	<meta name="description" content="">
 	<meta name="author" content="">
 
+	<style>
+		body {
+			background-color: gray;
+		}
+		
+		canvas {
+			background-color: white;
+		}
+	</style>
 </head>
 
 <body>
@@ -18,28 +28,8 @@
 	<canvas id="game" width="800" height="600"></canvas>
 	<!--<div id="game" style="position:relative;top:0;left:0;width:800px;height:600px;overflow:hidden;background-color:rgb(240,240,240);"></div>-->
 
-	<script src="js/externals/stats.min.js"></script>
-	<script src="js/externals/Box2d.min.js"></script>
 	<script src="js/eightyeight.min.js"></script>
+	<script src="js/examples/level1.js"></script>
 	
-	<script src="js/examples/testbed/level1.js"></script>
-	<script src="js/examples/testbed/gamelayer.js"></script>
-	<script src="js/examples/testbed/player.js"></script>
-	
-	<script>
-		var myLoader = rocket88.assetLoader;
-		myLoader.addAssets(["js/examples/testbed/images/data.png", "js/examples/testbed/data/data.json"]);
-		myLoader.downloadAll();
-
-		myLoader.onComplete = function() {
-			var myDirector = rocket88.director;
-			//myDirector.renderer = new HTMLRenderer(document.getElementById("game"));
-			myDirector.renderer = new rocket88.CanvasRenderer(document.getElementById("game"));
-			myDirector.scene = new Level1();
-			
-			myDirector.liftOff();
-		}
-	</script>
-
 </body>
 </html>

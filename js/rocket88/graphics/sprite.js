@@ -1,72 +1,126 @@
-rocket88.Sprite = Class.extend({
+(function(rocket88) {
+	"use strict";
 
-	// inheritDoc
-	init: function(url, spritesheet) {
-		if(!url) {
-			console.assert(!Rocket88.showErrors, "Required argument 'url' is missing");
-			return;
-		}
+	rocket88.Sprite = rocket88.Object.extends({
+		init: function(url, spritesheet) {
+			if(!url) {
+				console.assert(!rocket88.showErrors, "Required argument 'url' is missing");
+				return;
+			}
 
-		// Private properties
-		this._currentFrame	= undefined;
-		this._disposed 		= false;
-		this._spritesheet	= spritesheet;
-		this._url	 		= url;
+			this._url = url;
+			this._currentFrame = undefined;
+			this._disposed = false;
+			this._transform = new rocket88.TransformComponent();
+			this._sourceRect = new rocket88.Rectangle();
+			this._bounds = new rocket88.Rectangle();
+			this._AABB = new rocket88.Rectangle();
 
-		//this._bounds		= new Rectangle;
-		this._size			= new rocket88.Size();
-		this._transform		= new rocket88.TransformComponent();
+			if(!!spritesheet) {
+				var myData = rocket88.assetStore.getAsset(spritesheet);
+				this._spritesheet  = new rocket88.Spritesheet(myData);
 
-		// Public properties
-		this.cropRect 		= undefined;
-		this.className		= undefined;
-		this.alpha			= 1.0;	
-		this.tiled 			= false;
+				var mySource = this._spritesheet.firstFrame;
+				this._sourceRect.copy(mySource);
 
-		// Getters/Setters
-		this.__defineGetter__("currentFrame", function() { return this._currentFrame; });
-		this.__defineGetter__("disposed", function() { return this._disposed; });
-		this.__defineGetter__("spritesheet", function() { return this._spritesheet; });
-		this.__defineGetter__("size", function() { return this._size; });
-		this.__defineGetter__("transform", function() { return this._transform; });
-		this.__defineGetter__("url", function() { return this._url; });
+				this._bounds.copy(mySource);
+				this._bounds.center();
+			}
+		},
 
-		if(this._spritesheet) {
-			this._size = this._spritesheet.firstFrame.size.clone();
-			this.cropRect = this._spritesheet.firstFrame.clone();
-		}
-	},
-	
-	update: function() {
-	},
-	
-	showFrame: function(name) {
-		if(!this._spritesheet && Rocket88.showWarnings) {
-			console.error("Unable to set frame on sprite: " + this._url + " Sprite doesn't have spritesheet");
-		}
 
-		var myFrame = this._spritesheet.frameByName(name);
-		this.cropRect = myFrame.clone();
-	},
+		showFrame: function(name) {
+			if(!this._spritesheet && rocket88.showWarnings) {
+				console.error("Unable to set frame on sprite: " + this._url + " Sprite doesn't have spritesheet");
+			}
 
-	toCss: function() {
-		return "-moz-opacity:" + this.alpha + ";-webkit-opacity:" + this.alpha + ";-o-opacity:" + this.alpha + ";opacity:" + this.alpha + ";";
-	},
+			var mySource = this._spritesheet.frameByName(name);
+			this._sourceRect.copy(mySource);
 
-	dispose: function () {
-        if(this._disposed && Rocket88.showErrors) {
-        	console.error("Unable to dispose object: " + this.name);	
-        }
+			this._bounds.copy(mySource);
+			this._bounds.center();
+		},
 
-		console.info("sprite: " + this._url + " is disposed");	
 
-		this._disposed = true;
-		this._url = null;
-		this._size = null;
-		this._spritesheet = null;
-		this._transform = null;
+		toCss: function() {
+			var myWidth = this.bounds.size.width,
+				myHeight = this.bounds.size.height,
+				myLeft = -1 * myWidth >> 1,
+				myTop = -1 * myHeight >> 1;
 
-		this.className = null;
-		this.cropRect = null;
-	}
-});
+			var myCss = "position:absolute;" +
+						"left:" + myLeft + "px;top:" + myTop + "px;" +
+						"width:" + myWidth + "px;height:" + myHeight + "px;" +
+						"background-image:url(" + this.url + ");" +
+						"background-position:" + -1 * this.bounds.origin.x + "px " + -1 * this.bounds.origin.y + "px;" +
+						"-moz-opacity:" + this.alpha + ";-webkit-opacity:" + this.alpha + ";-o-opacity:" + this.alpha + ";opacity:" + this.alpha + ";";
+
+			return myCss;
+		},
+
+
+		dispose: function () {
+	        if(this._disposed && rocket88.showErrors) {
+	        	console.error("Unable to dispose object: " + this.name);	
+	        }
+
+			console.info("sprite: " + this._url + " is disposed");	
+
+			delete this._url;
+			delete this._spritesheet;
+			delete this._transform;
+			delete this._sourceRect;
+			delete this._bounds;
+			delete this._AABB;
+
+			this._disposed = true;
+		},
+
+
+	    defineProperties: function() {
+	        var myProperties = { 
+	        	currentFrame: {
+					enumerable: true, 
+	            	get: function() { return this._currentFrame; } 
+	        	},
+
+		        isDisposed: { 
+					enumerable: true, 
+	            	get: function() { return this._disposed; } 
+	        	},
+
+		        spritesheet: { 
+					enumerable: true, 
+	            	get: function() { return this._spritesheet; } 
+	        	},	        	
+
+		        size: { 
+					enumerable: true, 
+	            	get: function() { return this._size; } 
+	        	},
+
+		        transform: { 
+					enumerable: true, 
+	            	get: function() { return this._transform; } 
+	        	},
+
+		        url: { 
+					enumerable: true, 
+	            	get: function() { return this._url; } 
+	        	},
+
+	        	sourceRect: {
+	        		enumerable: true,
+	        		get: function() { return this._sourceRect; }
+	        	},
+
+	        	bounds: {
+	        		enumerable: true,
+	        		get: function() { return this._bounds; }
+	        	},
+	        };
+
+	        Object.defineProperties(this, myProperties)
+	    },
+	});
+})( use("rocket88") );

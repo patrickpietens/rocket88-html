@@ -1,55 +1,87 @@
-var b2Vec2 = b2Vec2 || Box2D.Common.Math.b2Vec2;
+(function(rocket88) {
+	"use strict";
 
-rocket88.Point = Class.extend({
+	rocket88.Point = Class.extends({
+		init: function(x, y) {
+			this.set(x, y);
+		},
+		
 
-	init: function(x, y) {
-		this.x = x || 0;
-		this.y = y || 0;
-	},
-	
-	add: function(point) {
-		this.x += point.x();
-		this.y += point.y();
-	},
+		set: function(x, y) {
+			this.x = x || 0;
+			this.y = y || 0;
 
-	substract: function(point) {
-		this.x -= point.x();
-		this.y -= point.y();
-	},
+			return this;
+		},
+		
 
-	multiply: function(value) {
-		this.x *= value;
-		this.y *= value;
-	},
+		abs: function() {
+			this.x = rocket88.abs(this.x);
+			this.y = rocket88.abs(this.y);
 
-	distanceTo: function(point) {
-		var myX = point.x() - this.x;
-		var myY = point.y() - this.y;
+			return this;
+		},
 
-		return Math.sqrt((myX * myX) + (myY * myY));
-	},
 
-	direction: function() {
-		var myX = point.x() - this.x;
-		var myY = point.y() - this.y;
+		add: function(vector) {
+			this.x += vector.x;
+			this.y += vector.y;
 
-   		return Math.atan2(myY, myX);
-	},
-	
-	clone: function() {
-		return new rocket88.Point(this.x, this.y);
-	},
+			return this;
+		},
 
-	toString: function() {
-		return "[point x=" + this.x + " y=" + this.y + "]";
-	},
 
-	toCss: function() {
-		return "left:" + this.x.toFixed(12) +";top:" + this.y.toFixed(12) + ";";
-	},
+		subtract: function(vector) {
+			this.x -= vector.x;
+			this.y -= vector.y;
 
-	toB2Vec2: function() {
-		var myScale = 1 / 30;
-		return new b2Vec2(this.x * myScale, this.y * myScale);
-	}
-});
+			return this;
+		},
+
+
+		multiply: function(value) {
+			this.x *= value;
+			this.y *= value;
+
+			return this;
+		},
+
+
+		divide: function(value) {
+			this.x /= value;
+			this.y /= value;
+
+			return this;
+		},
+
+
+		empty: function() {
+			this.x = 0;
+			this.y = 0;
+
+			return this;
+		},
+
+
+		clone: function() {
+			return new rocket88.Point(this.x, this.y);
+		},
+
+
+		copy: function(point) {
+			this.x = point.x;
+			this.y = point.y;
+
+			return this;
+		},
+
+
+		toCss: function() {
+			return "left:" + this.x.toFixed(12) +";top:" + this.y.toFixed(12) + ";";
+		},
+	});
+
+	rocket88.Point.create = function(x, y) {
+		return new rocket88.Point(x, y);
+	};	
+})( use("rocket88") );

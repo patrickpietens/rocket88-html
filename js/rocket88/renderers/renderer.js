@@ -1,90 +1,80 @@
-rocket88.Renderer = rocket88.EventDispatcher.extend({
-	init: function(name, target) {
-		this._super(name);
+(function(rocket88) {
+	"use strict";
 
-		if(target==undefined) {
-			throw ReferenceError("Required parameter 'target' is missing");
-		}
+	rocket88.Renderer = rocket88.Object.extends({
+		init: function(name, target) {
+			this._super(name);
 
-		// Private properties
-		this._target 			= target;
-		this._transformMatrix 	= new rocket88.Matrix();
-		this._cameraMatrix 	  	= new rocket88.Matrix();
+			if(!target) {
+				throw ReferenceError("Required parameter 'target' is missing");
+			}
 
-		this._camera			= undefined;
-		this._renderedGameObject= undefined;
-		this._renderedLayer		= undefined;
+			this._type = "renderer";
+			this._target = target;
+			this._buffer = new rocket88.LinkedList();
+		},
 
-		// Public properties
-		this.backgroundColor 	= undefined;
 
-		// Getters
-		this.__defineGetter__("target", function() { return this._target; });
-		this.__defineGetter__("transformMatrix", function() { return this._transformMatrix; });
-		this.__defineGetter__("type", function() { return "renderer"; });		
-		
-		// Setters
-		this.__defineSetter__("camera", function(camera) { 
+		prerender: function() {
+			this._buffer.empty();
+			return this;
+		},
 
-			this._camera = camera;
 
-			this._cameraMatrix.identity();
-        	this._cameraMatrix.tx = -1 * camera.position.x;
-    	    this._cameraMatrix.ty = -1 * camera.position.y;
-		});
+		bufferObject: function(gameobject) {
+			var myBounds = rocket88.director.stage.bounds,
+				myPaintRect = gameobject.screen.paintRect;
 
-		this.__defineSetter__("renderedLayer", function(layer) {
-			this._renderedLayer = layer;
-			/*if (layer.depth!=0.0) {                                                                                                                                                                                                                                                
-				var myFocalLength = myCamera.focalLength();
-				this._transform.scale = myFocalLength / (myFocalLength + this._depth);
+			// Check if the gameobject needs to be rendered
+			if(gameobject.screen.visible && myPaintRect.intersects(myBounds)) {
+				this._buffer.add(gameobject);
+			}
 
-				this._transform.x *= myScale;
-				this._transform.y *= myScale;
-			}*/
-		});
+			return this;
+		},
 
-		this.__defineSetter__("renderedGameObject", function(gameobject) {
-			this._renderedGameObject = gameobject;
-		});
-	},
 
-	ready: function() {
-	},
+		render: function() {
+			var myNode = this._buffer.head;
+			while (myNode) {
+				this.drawObject(myNode.data);
+				myNode = myNode.next;
+			}	
 
-	prepare: function() {
-	},
+			return this;		
+		},
 
-	draw: function(sprite) {		
-		this.calculateTransformation(sprite);
-	},
 
-	finish: function() {
-	},
+		drawObject: function(gameobject) {
+			return this;
+		},
 
-	calculateTransformation: function (sprite) {
 
-		// Calculate the transform matrix
-		this._transformMatrix.identity();
-		
-		// Add layer transformation
-		this._transformMatrix.multiply(this._cameraMatrix);
+		dispose: function() {
+			this._super();
 
-		// Add game transformation
-		this._transformMatrix.multiply(this._renderedGameObject.transform.matrix);
+			delete this._origin;
+			delete this._target;
+			delete this._buffer;
+		},
 
-		// Add sprite transformation
-		this._transformMatrix.multiply(sprite.transform.matrix);
 
-		return this._transformMatrix;
-	},
+	    defineProperties: function() {
+	    	this._super();
+	    	
+	    	var myProperties = {
+	    		target: {
+					enumerable: true, 
+	    			get: function() { return this._target; } 
+	    		},
 
-	dispose: function() {
-		this._super();
+	    		transformMatrix: {
+					enumerable: true, 
+	    			get: function() { return this._transformMatrix; } 
+	    		}
+	    	};
 
-		this._cameraMatrix = null;
-		this._origin = null;
-		this._target = null;
-		this._transformMatrix = null;
-	}
-});
+	    	Object.defineProperties(this, myProperties);
+		},
+	});
+})( use("rocket88") );

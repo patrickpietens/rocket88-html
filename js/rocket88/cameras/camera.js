@@ -1,38 +1,61 @@
-rocket88.Camera = rocket88.EventDispatcher.extend({
+(function(rocket88) {
+    "use strict";
 
-    // Executes when the object is instantiated
-    init: function(name)
-    {
-        this._super(name);
+    rocket88.Camera = rocket88.Object.extends({
+        init: function(name) {
+            this._super(name);
+            this._type = "camera";
 
-        // Private properties
-        this._position  = new rocket88.TransformComponent();
+            this.isStatic = true;
+            this.focalLength = 80;
 
-        // Public properties
-        this.isStatic    = true;
-        this.focalLength = 80;
-        this.viewport    = new rocket88.Rectangle();
-
-        // Getters
-        this.__defineGetter__("type", function() { return "camera"; });
-        this.__defineGetter__("position", function() { return this._position; });
-    },
+            this._zoom = 1;
+            this._inversedZoom = 1;
+            
+            this._transform = new rocket88.TransformComponent();
+            this._transform.parent = this;
+        },
 
 
-    clone: function(name) {
-        var myCamera = new Camera(name);
-        myCamera.isStatic    = this.isStatic;
-        myCamera.focalLength = this.focalLength;
-        myCamera.viewport    = this.viewport.clone();
+        update: function() {
+            this._super();
+            this._transform.update();
+        },
 
-        return myCamera;
-    },
+        
+        dispose: function() {
+            this._super();
 
-    
-    dispose: function() {
-        this._super();
+            delete this.transform;
+            delete this.viewport;
+        },
 
-        this.transform = null;
-        this.viewport = null;
-    },
-});
+
+        defineProperties: function() {
+            this._super();
+            
+            var myProperties = {
+                zoom: {
+                    enumerable: true,
+                    get: function() { return this._zoom; },
+                    set: function(zoom) { 
+                        this._zoom = zoom;
+                        this._inversedZoom = 1 / zoom;
+                    }
+                },
+
+                inversedZoom: {
+                    enumerable: true,
+                    get: function() { return this._inversedZoom }
+                },
+                
+                transform: {
+                    enumerable: true, 
+                    get: function() { return this._transform; } 
+                }
+            }
+
+            Object.defineProperties(this, myProperties);
+        },
+    });
+})( use("rocket88") );

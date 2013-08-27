@@ -1,132 +1,157 @@
-rocket88.AnimatedSprite = rocket88.Sprite.extend({
+(function(rocket88) {
+	"use strict";
 
-	// inheritDoc
-	init: function(url, spritesheet)
-	{
-		this._super(url, spritesheet);
+	rocket88.AnimatedSprite = rocket88.Sprite.extends({
 
-		if(!spritesheet) {
-			console.assert(!Rocket88.showErrors, "Required argument 'spritesheet' is missing");
-			return;
-		}
+		init: function(url, spritesheet) {
+			this._super(url, spritesheet);
+			if(!spritesheet) {
+				console.assert(!rocket88.showErrors, "Required argument 'spritesheet' is missing");
+				return;
+			}
 
-		this._super(url, spritesheet);
+			this._super(url, spritesheet);
 
-		// Private properties
-		this._framerate	= 60;
-		this._accumulator = 60 / 60;
-		this._tick = 0;
+			// Public properties
+			this.loop = true;
+			this.reverse = false;
 
-		this._currentAnimationName 	= undefined;
-		this._currentAnimation		= undefined;
-		this._running				= false;
-		this._stopAtTheEndOfCurrentAnimation = false;
+			// Private properties
+			this._framerate	= 60;
+			this._accumulator = 60 / 60;
+			this._tick = 0;
 
-		// Public properties
-		this.loop 		= true;
-		this.reverse 	= false;
+			this._currentAnimationName = undefined;
+			this._currentAnimation = undefined;
+			this._running = false;
+			this._stopAtTheEndOfCurrentAnimation = false;
+		},
 
-		// Getters
-		this.__defineGetter__("currentAnimation", function() { return this._currentAnimation; });
-		this.__defineGetter__("isRunning", function() { return this._running; });
+			
+		update: function() {
+			this._super();
 
-		this.__defineGetter__("framerate", function() { return this._framerate });
-		this.__defineSetter__("framerate", function(framerate) { 
-			this._framerate = framerate;
-			this._accumulator = 60 / framerate;
-		});
-	},
-		
-	update: function() {
-		this._super();
+			var self = this;
+			if(this._running && !!this._spritesheet) {
 
-		var self = this;
-		if(this._running && this._spritesheet) {
+				this._tick++;
+				if (this._tick>=this._accumulator) {
+					this._tick = 0;
 
-			this._tick++;
-			if (this._tick>=this._accumulator) {
-				this._tick = 0;
+					if(this._reversed) {
+						prevFrame();
+					}
+					else if(this._stopAtTheEndOfCurrentAnimation) {
+						this.stop();
+					}
+					else {
+						nextFrame();
+					}
 
-				if(this._reversed) {
-					prevFrame();
+					this.showFrame(this._currentFrame.data);			
 				}
-				else if(this._stopAtTheEndOfCurrentAnimation) {
+			}
+
+
+			function nextFrame() {
+				if(self._currentFrame.next) {
+					self._currentFrame = self._currentFrame.next;
+				}
+				else if(self._stopAtTheEndOfCurrentAnimation){
 					self.stop();
 				}
-				else {
-					nextFrame();
+				else if(self.loop) {
+					self._currentFrame = self._currentAnimation.head;	
 				}
-
-				this.showFrame(this._currentFrame.data);			
 			}
-		}
 
-		function nextFrame() {
-			if(self._currentFrame.next) {
-				self._currentFrame = self._currentFrame.next;
+
+			function prevFrame() {
+				if(self._currentFrame.prev) {
+					self._currentFrame = self._currentFrame.prev;
+				}
+				else if(self.loop) {
+					self._currentFrame = self._currentAnimation.tail;	
+				}
+			}	
+		},
+
+
+		play: function(animation) {
+			if(this._currentAnimationName==animation) {
+				return this;
 			}
-			else if(this._stopAtTheEndOfCurrentAnimation){
-				self.stop();
+
+			this._running = true;
+			this._stopAtTheEndOfCurrentAnimation = false;
+			this._currentAnimationName = animation;
+
+			this._currentAnimation 	= this.spritesheet.animationByName(animation);		
+			if(this._reversed) {
+				this._currentFrame	= this._currentAnimation.tail;	
 			}
-			else if(self.loop) {
-				self._currentFrame = self._currentAnimation.head;	
+			else {
+				this._currentFrame	= this._currentAnimation.head;
 			}
-		}
 
-		function prevFrame() {
-			if(self._currentFrame.prev) {
-				self._currentFrame = self._currentFrame.prev;
-			}
-			else if(self.loop) {
-				self._currentFrame = self._currentAnimation.tail;	
-			}
-		}	
-	},
-
-	play: function(animation) {
-		if(this._currentAnimationName==animation) {
-			return this;
-		}
-
-		this._running = true;
-		this._stopAtTheEndOfCurrentAnimation = false;
-		this._currentAnimationName = animation;
-
-		this._currentAnimation 	= this.spritesheet.animationByName(animation);		
-		if(this._reversed) {
-			this._currentFrame	= this._currentAnimation.tail;	
-		}
-		else {
-			this._currentFrame	= this._currentAnimation.head;
-		}
-
-		this.showFrame(this._currentFrame.data);
-
-		return this;
-	},
-
-	stop: function() {
-		this._running = false;
-		this._stopAtTheEndOfCurrentAnimation = false;
-
-		if(this._currentAnimation) {
-			this._currentFrame = this._currentAnimation.head;	
 			this.showFrame(this._currentFrame.data);
-		}
 
-		this._currentAnimationName = undefined;
-		this._currentAnimation = undefined;
+			return this;
+		},
 
-		return this;
-	},
 
-	stopAtTheEndOfCurrentAnimation: function() {
-		this._stopAtTheEndOfCurrentAnimation = true;
-	},
+		stop: function() {
+			this._running = false;
+			this._stopAtTheEndOfCurrentAnimation = false;
 
-	dispose: function() {
-		this._super();
+			if(this._currentAnimation) {
+				this._currentFrame = this._currentAnimation.head;	
+				this.showFrame(this._currentFrame.data);
+			}
 
-		this._currentAnimation = null;
-	}
-});
+			this._currentAnimationName = undefined;
+			this._currentAnimation = undefined;
+
+			return this;
+		},
+
+
+		stopAtTheEndOfCurrentAnimation: function() {
+			this._stopAtTheEndOfCurrentAnimation = true;
+		},
+
+
+		dispose: function() {
+			this._super();
+			delete this._currentAnimation;
+		},
+
+
+	    defineProperties: function() {
+	        this._super();
+	        
+	        var myProperties = {
+	        	currentAnimation: {
+					enumerable: true, 
+		            get: function() { return this._currentAnimation; } 
+		        },
+
+		        isRunning: {
+					enumerable: true, 
+		            get: function() { return this._isRunning; } 
+		        },
+
+		        framerate: {
+					enumerable: true, 
+		            get: function() { return this._framerate; },
+		            set: function(framerate) {
+						this._framerate = framerate;
+						this._accumulator = 60 / framerate;	            	
+		            }
+		        },
+		    };
+
+		    Object.defineProperties(this, myProperties);
+	    },
+	});
+})( use("rocket88") );

@@ -1,20 +1,9 @@
 {
   "CodeKitInfo" : "This is a CodeKit project configuration file. It is designed to sync project settings across multiple machines. Modifying the contents of this file can be a poor life decision if you don't know what you're doing. This file is not useful unless accompanied by the project that created it in CodeKit. For more information, see: http:\/\/incident57.com\/codekit",
-  "creatorBuild" : "8283",
+  "creatorBuild" : "8317",
   "files" : {
-    "\/js\/rocket88\/event.dispatcher.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/event.dispatcher.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/event.dispatcher-min.js",
-      "fileType" : 64
-    },
     "\/js\/rocket88\/utils\/geom\/point.js" : {
-      "ignoreWasSetByUser" : 1,
+      "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
@@ -24,37 +13,15 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/point-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/components\/physics.component.js" : {
-      "ignoreWasSetByUser" : 1,
+    "\/js\/rocket88\/utils\/geom\/vector.js" : {
+      "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/physics.component.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/vector.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/physics.component-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/object88.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/object88.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/object88-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/utils\/linked.list.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/linked.list.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/linked.list-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/vector-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/cameras\/camera.js" : {
@@ -68,15 +35,26 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/cameras\/camera-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/collision.solver.js" : {
+    "\/js\/rocket88\/collisions\/box.collider.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/collision.solver.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/collisions\/box.collider.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/collision.solver-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/collisions\/box.collider-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/components\/collision.component.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/collision.component.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/collision.component-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/cameras\/chase.camera.js" : {
@@ -90,28 +68,6 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/cameras\/chase.camera-min.js",
       "fileType" : 64
     },
-    "\/js\/examples\/testbed\/player.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/examples\/testbed\/player.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/examples\/testbed\/player-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/components\/collisions.component.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/collisions.component.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/collisions.component-min.js",
-      "fileType" : 64
-    },
     "\/js\/rocket88\/components\/graphic.component.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
@@ -121,17 +77,6 @@
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/js\/rocket88\/components\/graphic.component-min.js",
-      "fileType" : 64
-    },
-    "\/js\/examples\/testbed\/level1.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/examples\/testbed\/level1.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/examples\/testbed\/level1-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/utils.js" : {
@@ -145,50 +90,6 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/utils-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/scenes\/topdown.scene.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/scenes\/topdown.scene.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/scenes\/topdown.scene-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/gameobjects\/platform.object.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/platform.object.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/platform.object-min.js",
-      "fileType" : 64
-    },
-    "\/js\/externals\/stats.min.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/externals\/stats.min.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/externals\/stats.min-min.js",
-      "fileType" : 64
-    },
-    "\/js\/externals\/Box2d.min.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/externals\/Box2d.min.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/externals\/Box2d.min-min.js",
-      "fileType" : 64
-    },
     "\/js\/rocket88\/graphics\/animated.sprite.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
@@ -198,6 +99,50 @@
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/js\/rocket88\/graphics\/animated.sprite-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/object.container.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/object.container.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/object.container-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/scene.js" : {
+      "ignoreWasSetByUser" : 1,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/scene.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/scene-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/stage.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/stage.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/stage-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/components\/screen.component.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/screen.component.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/screen.component-min.js",
       "fileType" : 64
     },
     "\/js\/eightyeight.js" : {
@@ -244,59 +189,15 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/graphics\/spritesheet-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/renderers\/html.renderer.js" : {
+    "\/js\/rocket88\/renderers\/renderer.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/renderers\/html.renderer.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/renderers\/renderer.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/renderers\/html.renderer-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/gameobjects\/trigger.object.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/trigger.object.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/trigger.object-min.js",
-      "fileType" : 64
-    },
-    "\/js\/examples\/testbed\/images\/data.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/examples\/testbed\/images\/data.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/js\/examples\/testbed\/images\/data.png",
-      "initialSize" : 119514,
-      "fileType" : 8192
-    },
-    "\/js\/rocket88\/components\/component.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/component.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/component-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/utils\/geom\/size.js" : {
-      "ignoreWasSetByUser" : 1,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/size.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/size-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/renderers\/renderer-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/asset.loader.js" : {
@@ -310,15 +211,59 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/asset.loader-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/layers\/layer.js" : {
+    "\/js\/rocket88\/components\/component.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/layers\/layer.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/component.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/layers\/layer-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/component-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/renderers\/dom.renderer.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/renderers\/dom.renderer.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/renderers\/dom.renderer-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/utils\/geom\/size.js" : {
+      "ignoreWasSetByUser" : 1,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/size.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/size-min.js",
+      "fileType" : 64
+    },
+    "\/js\/examples\/level1.js" : {
+      "ignoreWasSetByUser" : 1,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/examples\/level1.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/examples\/level1-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/graphics\/sprite.js" : {
+      "ignoreWasSetByUser" : 1,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/graphics\/sprite.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/graphics\/sprite-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/geom\/rotation.js" : {
@@ -332,15 +277,15 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/rotation-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/director.js" : {
-      "ignoreWasSetByUser" : 1,
+    "\/js\/rocket88\/collisions\/collision.solver.js" : {
+      "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
-      "outputPathIsSetByUser" : 1,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/director.js",
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/collisions\/collision.solver.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/eightyeight-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/collisions\/collision.solver-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/geom\/matrix.js" : {
@@ -365,71 +310,93 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/renderers\/canvas.renderer-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/renderers\/renderer.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/renderers\/renderer.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/renderers\/renderer-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/graphics\/sprite.js" : {
+    "\/js\/rocket88\/utils\/structures\/linked.list.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/graphics\/sprite.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/structures\/linked.list.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/graphics\/sprite-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/structures\/linked.list-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/components\/joints.component.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/components\/joints.component.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/components\/joints.component-min.js",
-      "fileType" : 64
-    },
-    "\/js\/rocket88\/gameobjects\/physics.object.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/physics.object.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/physics.object-min.js",
-      "fileType" : 64
-    },
-    "\/js\/examples\/testbed\/gamelayer.js" : {
+    "\/js\/rocket88\/director.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
       "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/examples\/testbed\/gamelayer.js",
+      "outputPathIsSetByUser" : 1,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/director.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/examples\/testbed\/gamelayer-min.js",
+      "outputAbbreviatedPath" : "\/eightyeight-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/gameobjects\/interactive.object.js" : {
+    "\/js\/rocket88\/sounds\/sound.collection.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/interactive.object.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/sounds\/sound.collection.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/interactive.object-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/sounds\/sound.collection-min.js",
       "fileType" : 64
+    },
+    "\/js\/rocket88\/utils\/geom\/functions.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/functions.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/functions-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/gameobjects\/interactive.game.object.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/interactive.game.object.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/interactive.game.object-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/collisions\/circle.collider.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/collisions\/circle.collider.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/collisions\/circle.collider-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/utils\/structures\/quad.tree.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/utils\/structures\/quad.tree.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/structures\/quad.tree-min.js",
+      "fileType" : 64
+    },
+    "\/img\/data.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/img\/data.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/img\/data.png",
+      "initialSize" : 119514,
+      "fileType" : 8192
     },
     "\/index.html" : {
       "ignoreWasSetByUser" : 0,
@@ -440,15 +407,15 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/js\/rocket88\/scenes\/multiplayer.scene.js" : {
+    "\/js\/rocket88\/sounds\/sound.js" : {
       "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
+      "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/scenes\/multiplayer.scene.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/sounds\/sound.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/scenes\/multiplayer.scene-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/sounds\/sound-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/geom\/rectangle.js" : {
@@ -462,15 +429,26 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/utils\/geom\/rectangle-min.js",
       "fileType" : 64
     },
-    "\/js\/externals\/Box2dWeb-2.1.a.3.min.js" : {
+    "\/js\/rocket88\/object.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/externals\/Box2dWeb-2.1.a.3.min.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/object.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/externals\/Box2dWeb-2.1.a.3.min-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/object-min.js",
+      "fileType" : 64
+    },
+    "\/js\/rocket88\/cameras\/scroll.camera.js" : {
+      "ignoreWasSetByUser" : 1,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/js\/rocket88\/cameras\/scroll.camera.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/js\/rocket88\/cameras\/scroll.camera-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/components\/mouse.component.js" : {
@@ -495,26 +473,26 @@
       "outputAbbreviatedPath" : "\/js\/rocket88\/gameobjects\/game.object-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/scenes\/scene.js" : {
+    "\/js\/rocket88\/layer.js" : {
       "ignoreWasSetByUser" : 1,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/scenes\/scene.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/layer.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/scenes\/scene-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/layer-min.js",
       "fileType" : 64
     },
-    "\/js\/rocket88\/cameras\/scroll.camera.js" : {
-      "ignoreWasSetByUser" : 1,
+    "\/js\/rocket88\/collisions\/collider.js" : {
+      "ignoreWasSetByUser" : 0,
       "ignore" : 1,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/js\/rocket88\/cameras\/scroll.camera.js",
+      "inputAbbreviatedPath" : "\/js\/rocket88\/collisions\/collider.js",
       "outputStyle" : 1,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/js\/rocket88\/cameras\/scroll.camera-min.js",
+      "outputAbbreviatedPath" : "\/js\/rocket88\/collisions\/collider-min.js",
       "fileType" : 64
     },
     "\/js\/rocket88\/utils\/asset.store.js" : {
@@ -569,7 +547,10 @@
     "sassAutoOutputPathStyle" : 2,
     "stylusAutoOutputPathReplace2" : "css",
     "lessAutoOutputPathStyle" : 2,
+    "lessIECompatibility" : 1,
     "genericWebpageFileExtensionsString" : "html, htm, shtml, shtm, xhtml, php, jsp, asp, aspx, erb, ctp",
+    "lessStrictUnits" : 0,
+    "lessStrictMath" : 0,
     "coffeeMinifyOutput" : 1,
     "javascriptOutputSuffix" : "-min",
     "jadeOutputStyle" : 0,
@@ -623,28 +604,26 @@
       "curly" : 1,
       "trailing" : 1,
       "nonew" : 1,
-      "withstmt" : 0,
+      "es3" : 0,
       "yui" : 0,
       "mootools" : 0,
       "proto" : 0,
       "boss" : 0,
       "funcscope" : 0,
-      "regexdash" : 0,
       "jquery" : 1,
       "esnext" : 0,
       "camelcase" : 0,
-      "es5" : 0,
       "dojo" : 0,
       "strict" : 0,
       "devel" : 0,
-      "onecase" : 0,
       "wsh" : 0,
       "nonstandard" : 0,
       "asi" : 0,
-      "smarttabs" : 0,
+      "moz" : 0,
       "rhino" : 0,
-      "noempty" : 0,
+      "smarttabs" : 0,
       "lastsemic" : 0,
+      "noempty" : 0,
       "eqnull" : 0,
       "eqeqeq" : 1,
       "couch" : 0,
@@ -668,43 +647,37 @@
       "multistr" : 0,
       "shadow" : 0,
       "sub" : 0,
-      "regexp" : 1,
+      "plusplus" : 0,
       "scripturl" : 0,
       "forin" : 0,
       "loopfunc" : 0,
-      "laxbreak" : 0,
-      "plusplus" : 0
+      "laxbreak" : 0
     },
     "jsLintFlags" : {
       "white" : 0,
-      "bitwise" : 0,
+      "unparam" : 0,
       "regexp" : 0,
+      "nomen" : 0,
       "vars" : 0,
-      "anon" : 0,
       "sub" : 0,
       "stupid" : 0,
-      "nomen" : 0,
-      "unparam" : 0,
+      "continue" : 0,
+      "bitwise" : 0,
       "newcap" : 0,
-      "'continue'" : 0,
       "sloppy" : 0,
-      "fragment" : 0,
-      "undef" : 0,
+      "closure" : 0,
       "es5" : 0,
       "browser" : 1,
       "properties" : 0,
-      "forin" : 0,
       "plusplus" : 0,
       "debug" : 0,
+      "forin" : 0,
       "eqeq" : 0,
-      "confusion" : 0,
       "evil" : 0,
-      "on" : 0,
-      "windows" : 0,
-      "devel" : 0,
-      "rhino" : 0,
       "node" : 0,
-      "css" : 0
+      "rhino" : 0,
+      "devel" : 0,
+      "ass" : 0
     },
     "uglifyFlags" : {
       "no-mangle-functions" : 0,
@@ -726,6 +699,7 @@
     "jadeCompileDebug" : 1,
     "slimRailsCompatible" : 0,
     "kitAutoOutputPathReplace2" : "",
+    "lessRelativeURLS" : 0,
     "lessDebugStyle" : 0,
     "javascriptAutoOutputPathRelativePath" : ".\/js-min\/",
     "slimAutoOutputPathStyle" : 0
@@ -733,7 +707,7 @@
   "projectAttributes" : {
     "bourbonEnabled" : 0,
     "displayValue" : "rocket88-html",
-    "displayValueWasSetByUser" : 0,
+    "displayValueWasSetByUser" : 1,
     "compassEnabled" : 0
   }
 }

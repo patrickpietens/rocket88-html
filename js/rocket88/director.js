@@ -1,155 +1,172 @@
-rocket88.Director = rocket88.EventDispatcher.extend({
+(function(rocket88) {
+	"use strict";
 
-	// Executes when the object is instantiated
-	init: function(debugMode) {		
-		this._super("director");
+	rocket88.Director = Class.extends({
+		init: function(target) {		
+			if(!!window.director) {
+				throw ReferenceError("Houston, we have a problem. Director is a singleton class. Use director to get a reference.");
+			}
 
-		if(rocket88.director) {
-			throw ReferenceError("Houston, we have a problem. Director is a singleton class. Use rocket88.director to get a reference.");
-		}
-		console.log("This game utilises the Rocket88 engine v" + rocket88.version);
+			console.log("This game utilises the Rocket88 engine");
+			window.director = this;
 
-		if(debugMode) {
-			this._stats = new Stats();
-			this._stats.domElement.style.position = "absolute";
-			this._stats.domElement.style.top = "0px";
-			this._stats.domElement.style.left = "0px";
-			
-			document.body.appendChild(this._stats.domElement);			
-		}
+			this._type = "director";
+			this._accumulator = 0;
+			this._crashed = false;
+			this._currentScene = null;
+			this._currentTime = new Date().getTime();
+			this._frameTime = 1000 / 60;
+			this._paused = false;
+			this._stage = new rocket88.Stage(target);
+			this._renderer = new rocket88.CanvasRenderer(this._stage);
 
-		// Private properties
-		this._accumulator 	= 0;
-		this._crashed		= false;
-		this._currentScene 	= null;
-		this._currentTime 	= new Date().getTime();
-		this._frame 		= 0;
-		this._frameTime 	= 1000 / 60;
-		this._paused 		= false;
-		this._renderer 		= undefined;		
+			rocket88.director = this;
+			rocket88.assetStore = new rocket88.AssetStore();
+			rocket88.assetLoader = new rocket88.AssetLoader();
 
-		// Public properties
-		this.debugMode	 	= debugMode;
-		this.showWarnings 	= debugMode;
-		this.showErrors	 	= debugMode;
+			rocket88.showWarnings = true;
+			rocket88.showErrors	= true;
+			rocket88.drawPaintRectangles = false;
 
-	    // Getters/setters
-		this.__defineGetter__("type", function(){ return "Rocket88" });
-		this.__defineGetter__("crashed", function(){ return this._crashed; });
+			rocket88.version = "0.11";
+			rocket88.authors = "Patrick Pietens";			
+		},
 
-		// Setters
-		this.__defineGetter__("renderer", function(){ return this._renderer; });		
-		this.__defineSetter__("renderer", function(renderer) {
-			if(this._renderer) {
-				console.assert(!this.showErrors, "Renderer already added");
+
+		updateWithFixedTimestep: function() {	
+			if (!this._paused && !this._crashed) {		
+				requestAnimationFrame(delegate(this, this.updateWithFixedTimestep));
+
+				// Set local properties
+				var myNow = new Date().getTime();
+				var myTimestep = myNow - this._currentTime;
+
+				// Update the time & accumulator
+				this._accumulator += myTimestep;
+				this._currentTime = myNow;
+
+				// Render the scene according the time accumulator
+				while(this._accumulator >= this._frameTime) {
+					this._accumulator -= this._frameTime;
+					this.update();
+				}		
+			}
+		},
+
+
+		update: function() {
+			this._frame++;
+
+			this._renderer.prerender();
+			this._currentScene.update();
+			this._renderer.render();
+		},
+
+
+		liftOff: function() {
+			if(!this._currentScene) {
+	            throw ReferenceError("Houston, we have a problem. Required argument 'scene' is missing");
+	            return this;
+	        }
+
+			if(!this._renderer) {
+				throw ReferenceError("Houston, we have a problem. Required argument 'renderer' is missing");
+				return this;
 			}
 			
-			this._renderer = renderer;
-		});
+			this._currentScene.ready();
+			this._renderer.ready();
 
-		this.__defineGetter__("scene", function(){ return this._currentScene });
-		this.__defineSetter__("scene", function(scene) {
-			
-			// Destroy previous scene
-			if(this._currentScene && this._currentScene.autoDestroy) {
-				this._currentScene.destroy();
-			}
-			
-			// Set the scene
-			this._currentScene = scene;
-		});
-	},
-		
-	// Updates the scene using a fixed timestep
-	updateWithFixedTimestep: function() {	
-		if (!this._paused && !this._crashed) {		
-			requestAnimationFrame(delegate(this, this.updateWithFixedTimestep));
+			console.info("director: we have a lift off!");	 
 
-			// Set local properties
-			var myNow = new Date().getTime();
-			var myTimestep = myNow - this._currentTime;
+			this._paused = false;
+			this.updateWithFixedTimestep();
 
-			// Update the time & accumulator
-			this._accumulator += myTimestep;
-			this._currentTime = myNow;
+			return this;
+		},
 
-			// Render the scene according the time accumulator
-			while(this._accumulator >= this._frameTime) {
-				this._accumulator -= this._frameTime;
-				this.update();
-			}		
-		}
-	},
 
-	// Executes every render tick
-	update: function() {
-		this._frame++;
+		land: function() {
+			this._paused = true;
+			return this;
+		},	
 
-		this._renderer.prepare();
-		this._currentScene.update();
-		this._renderer.camera = this._currentScene.camera;
-		this._renderer.finish();
 
-		if(this._stats) {
-			this._stats.update();
-		}
-	},
+		crash: function() {
+	        if(!!this._crashed) {
+	        	throw ReferenceError("Houston, we have a problem. Unable to crash Rocket88 game");	
+	        	return this;
+	        }
 
-	// Starts running the game. This function will resume the game after it is paused
-	liftOff: function() {
-		if(!this._currentScene) {
-            throw ReferenceError("Houston, we have a problem. Required argument 'scene' is missing");
-            return false;
-        }
+			console.info("director: Rocket88 crashed to the ground");
 
-		if(!this._renderer) {
-			throw ReferenceError("Houston, we have a problem. Required argument 'renderer' is missing");
-			return false;
-		}
-		
-		this._currentScene.ready();
-		this._renderer.ready();
+			this._currentScene.dispose();
+			this._stage.dispose();
+			this._renderer.dispose();
 
-		console.info("Houston, we have a lift off!");	 
+			this._currentTime 	= 0;
+			this._paused 		= false;
+			this._crashed		= true;
 
-		this._paused = false;
-		this.updateWithFixedTimestep();
+			delete this._currentTime;
+			delete this._currentScene;
+			delete this._renderer;
+			delete this._stage;
 
-		return true;
-	},
+			return this;
+		},
 
-	// Pauses the game
-	land: function() {
-		this._paused = true;
-	},	
 
-	crash: function() {
-        if(this._crashed) {
-        	throw ReferenceError("Houston, we have a problem. Unable to crash Rocket88 game");	
-        	return false;
-        }
+		toString: function() {
+			return "[" + this.type + " running=" + !this._paused + " crashed="+ this._crashed +"]";
+		},
 
-		console.info("Houston, Rocket88 crashed to the ground");
 
-		this._currentScene.dispose();
-		
-		AssetStore.getInstance().dispose();
-		AssetLoader.getInstance().dispose();
+		defineProperties: function() {
+			var myProperties = {
+				type: {
+					enumerable: true, 
+					get: function() { 
+						return "director"; 
+					}
+				},
 
-		this._currentScene 	= null;
-		this._currentTime 	= 0;
-		this._frame 		= 0;
-		this._paused 		= false;
-		this._renderer 		= null;
-		this._crashed		= true;
+				isCrashed: {
+					enumerable: true, 
+					get: function() { return this._crashed; }
+				},
 
-		return true;
-	},
+				stage: {
+					enumerable: true,
+					get: function() { return this._stage; }
+				},
 
-	// String representation of the game
-	toString: function() {
-		return "[" + this.type + " running=" + !this._paused + " crashed="+ this._crashed +"]";
-	},
-});
+				renderer: {
+					enumerable: true, 
+					get: function() { return this._renderer; },
+					set: function(renderer) {
+						if(!!this._renderer && this._renderer.autoDispose) {
+							this._renderer.dispose();
+						}
 
-rocket88.director = new rocket88.Director(true);
+						this._renderer = renderer;
+					}
+				},
+
+				scene: {
+					enumerable: true, 
+					get: function() { return this._currentScene; },
+					set: function(scene) {
+						if(!!this._currentScene && this._currentScene.autoDispose) {
+							this._currentScene.dispose();
+						}
+
+						this._currentScene = scene;
+					}
+				},
+			};
+
+			Object.defineProperties(this, myProperties);
+		},
+	});
+})( use("rocket88") );

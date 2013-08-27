@@ -1,74 +1,88 @@
-rocket88.AssetStore = Class.extend({
+(function(rocket88) {
+	"use strict";
 
-	init: function() {
-		if(rocket88.assetStore) {
-			throw ReferenceError("Houston, we have a problem. AssetStore is a singleton class. Use rocket88.assetStore method to get a reference.");
-		}
-
-		rocket88.AssetStore.instance = this;
-
-		// Private properties
-		this._disposed = false;
-		this._assets = new Object();
-
-		// Getters
-		this.__defineGetter__("isDisposed", function() { return this._disposed; });
-		this.__defineGetter__("assets", function() { 
-			var myAssets = new Array();
-			for (var path in this._assets) {
-				myAssets.push(path);
+	rocket88.AssetStore = Class.extends({
+		init: function() {
+			if(rocket88.assetStore) {
+				throw ReferenceError("Houston, we have a problem. AssetStore is a singleton class. Use rocket88.assetStore method to get a reference.");
 			}
 
-			return myAssets; 
-		});
-	},
+			this._disposed = false;
+			this._assets = new Object();
+		},
 
-	addAsset: function(asset, path) {
-		if(this.hasAsset(path)) {
-			console.error("Unable to add asset: " + path + " to AssetStore. Asset already exists.");
-			return;
-		}
 
-		if(!asset) {
-			console.error("Unable to add asset: " + path + " to AssetStore. Asset cannot be undefined.");
-			return;			
-		}
+		addAsset: function(asset, path) {
+			if(this.hasAsset(path)) {
+				console.error("Unable to add asset: " + path + " to AssetStore. Asset already exists.");
+				return;
+			}
 
-		this._assets[path] = asset;
-	},
+			if(!asset) {
+				console.error("Unable to add asset: " + path + " to AssetStore. Asset cannot be undefined.");
+				return;			
+			}
 
-	removeAllAssets: function() {
-		for (var path in this._assets) {
-			delete this._assets[path];
-		}
+			this._assets[path] = asset;
+		},
 
-		this._assets = new Object();
-	},
 
-	getAsset: function(path) {
-		return this._assets[path];
-	},
+		removeAllAssets: function() {
+			for (var path in this._assets) {
+				delete this._assets[path];
+			}
 
-	assetType: function(path) {
-		return path.split(".").pop();
-	},
+			this._assets = new Object();
+		},
 
-	hasAsset: function(path) {
-		return this._assets[path] != null;
-	},
 
-	dispose: function() {
-        if(this._disposed) {
-        	console.error("Unable to dispose object: " + this.name);	
-        }
+		getAsset: function(path) {
+			if(!this.hasAsset(path)) {
+				console.error("Asset doesn't exist: " + path);	
+			}
 
-		console.info(this.type + ": " + this.name + " is disposed");	
-	
-		this.removeAllAssets();
+			return this._assets[path];
+		},
+
+
+		assetType: function(path) {
+			return path.split(".").pop();
+		},
+
+
+		hasAsset: function(path) {
+			return this._assets[path] != null;
+		},
+
+
+		dispose: function() {
+	        if(this._disposed) {
+	        	console.error("Unable to dispose object: " + this.name);	
+	        }
+
+			console.info(this.type + ": " + this.name + " is disposed");	
 		
-		this._disposed = true;		
-		this._assets = null;
-	}
-});
+			this.removeAllAssets();
+			
+			this._disposed = true;		
+			this._assets = null;
+		},
 
-rocket88.assetStore  = new rocket88.AssetStore();
+
+		defineProperties: function() {
+			Object.defineProperties(this, {
+				assets: {
+					get: function() { 
+						var myAssets = new Array();
+						for (var path in this._assets) {
+							myAssets.push(path);
+						}
+
+						return myAssets; 
+					}
+				}
+			});
+		},
+	});
+})( use("rocket88") );
+	

@@ -1,95 +1,134 @@
-var b2DebugDraw = b2DebugDraw || Box2D.Dynamics.b2DebugDraw;
+(function(rocket88) {
+	"use strict";
 
-rocket88.CanvasRenderer = rocket88.Renderer.extend({
+	rocket88.CanvasRenderer = rocket88.Renderer.extends({
+		init: function(stage) {
+			this._super("canvas.renderer", stage.target);
 
-	init: function(target) {
-		this._super("canvas.renderer", target);
+			if(stage.target.tagName.toLowerCase()!="canvas") {
+				throw ReferenceError("Required property 'target' must be a canvas object");
+			}
 
-		if(target.tagName.toLowerCase()!="canvas") {
-			throw ReferenceError("Required property 'target' must be a canvas object");
-		}
+			this._context = stage.target.getContext("2d");
+			this._center = new rocket88.Point();
+			this._center.x = this._context.canvas.width >> 1;
+			this._center.y = this._context.canvas.height >> 1;
 
-		// Private properties
-		this._context = target.getContext("2d");
+			this.immediateMode = false;
+		},
 
-		// Getters
-		this.__defineGetter__("context", function() { return this._context; });		
-	},
 
-	ready: function() {
-		this._super();
-		
-		// Setup debug drawing
-		if(rocket88.director.debugMode) {
+		prerender: function() {
+			this._super();
 
-			this.backgroundColor = "#cccccc";
-
-			var myDebugDraw = new b2DebugDraw();
-			myDebugDraw.SetSprite(this._context);
-			myDebugDraw.SetDrawScale(30);
-			myDebugDraw.SetFillAlpha(1.0);
-			myDebugDraw.SetLineThickness(1.0);
-			myDebugDraw.SetFlags(b2DebugDraw.e_shapeBit|b2DebugDraw.e_jointBit);
-			
-			rocket88.director.scene.world.SetDebugDraw(myDebugDraw);		
-		}
-	},
-
-	prepare: function() {
-		this._super();
-
-        // Set the backgroundColor
-		if (this.backgroundColor) {
-
-			this._context.fillStyle = "#cccccc";
-			this._context.fillRect(0, 0, this._target.width, this._target.height);
-		}
-		else {
+			this._context.setTransform(1, 0, 0, 1, 0, 0);
 			this._context.clearRect(0, 0, this._target.width, this._target.height);
-		}
-	},
 
-	// Draws a sprite to the renderer
-	draw: function(sprite) {
-		this._super(sprite);
+			this._context.beginPath();
+			this._context.strokeStyle = "gray";
 
-		if(!rocket88.assetStore.hasAsset(sprite.url)) {
-			console.assert(!myDirector.showErrors, "Unable to find sprite:" + sprite.url + " at the AssetStore");
-			return;
-		}
+			this._context.moveTo(400.5, 0);
+			this._context.lineTo(400.5, 600);
 
-		// Save context
-		this._context.save();		
+			this._context.moveTo(0, 300.5);
+			this._context.lineTo(800, 300.5);
 
-		var myWidth 	= sprite.cropRect.size.width;
-		var myHeight 	= sprite.cropRect.size.height;
-		var myLeft 		= -myWidth >> 1;
-		var myTop 		= -myHeight >> 1;
+			this._context.stroke();
+		},
 
-		// Transform canvas context
-		this._context.transform(
-			this.transformMatrix.a, 
-			this.transformMatrix.b, 
-			this.transformMatrix.c, 
-			this.transformMatrix.d, 
-			this.transformMatrix.tx, 
-			this.transformMatrix.ty);
+
+		bufferObject: function(gameobject) {
+			if(this.immediateMode) {
+				this.drawObject(gameobject);
+				return;
+			}
+
+			this._super(gameobject);
+		},
+
+
+		drawObject: function(gameobject) {
+			var mySprite = gameobject.graphic.sprite,
+				myImage = rocket88.assetStore.getAsset(mySprite.url),
+				myTransformMatrix = gameobject.screen.transformMatrix;
+
+			var mySource = mySprite.sourceRect,
+				myTarget = mySprite.bounds;
+
+			// Reset context
+			this._context.setTransform(1, 0, 0, 1, this._center.x, this._center.y);
+
+			// Transform context according transformation matrix from the gameobject
+			this._context.transform(
+				myTransformMatrix.a, 
+				myTransformMatrix.b, 
+				myTransformMatrix.c, 
+				myTransformMatrix.d, 
+				myTransformMatrix.tx, 
+				myTransformMatrix.ty);
 		
-		this._context.globalAlpha = sprite.alpha;
-
-		var myImage = rocket88.assetStore.getAsset(sprite.url);
-		this._context.drawImage(
-			myImage, 		
+			// Set opacity of the context
+			this._context.globalAlpha = gameobject.screen.alpha;
 		
-			// Source
-			sprite.cropRect.origin.x, sprite.cropRect.origin.y, 
-			myWidth, myHeight,
+			// Draw image to screen
+			this._context.drawImage(
+				myImage, 		
+			
+				// Source
+				mySource.origin.x, mySource.origin.y, 
+				mySource.size.width, mySource.size.height,
 
-			// Destination
-			myLeft, myTop, 
-			myWidth, myHeight);
+				// Destination
+				myTarget.origin.x, myTarget.origin.y, 
+				myTarget.size.width, myTarget.size.height);
 
-		// Restore the context to its original state
-    	this._context.restore();
-	}
-});
+			// Draw debug shapes
+			this.drawDebug(gameobject);
+		},
+
+		
+		drawDebug: function(gameobject) {
+			var myPaintRect = gameobject.screen.paintRect,
+				myBounds = gameobject.graphic.sprite.bounds,
+				myTransformMatrix = gameobject.screen.transformMatrix;
+
+			// Draw center
+			this._context.beginPath();
+			this._context.moveTo(0, -25);
+			this._context.strokeStyle = "yellow";
+			this._context.lineTo(0, 0);
+			this._context.stroke();
+
+			this._context.beginPath();
+			this._context.moveTo(0, 0);
+			this._context.strokeStyle = "green";
+			this._context.lineTo(25, 0);
+			this._context.stroke();
+
+			// Draw sprite bounds
+			this._context.beginPath();
+			this._context.strokeStyle = "blue";
+			this._context.rect(myBounds.origin.x, myBounds.origin.y, myBounds.size.width, myBounds.size.height);
+			this._context.stroke();
+
+			// Draw paint rectangle
+			this._context.setTransform(1, 0, 0, 1, this._center.x, this._center.y);
+			this._context.beginPath();
+			this._context.strokeStyle = "red";
+			this._context.rect(myPaintRect.origin.x, myPaintRect.origin.y, myPaintRect.size.width, myPaintRect.size.height);
+			this._context.stroke();
+		},
+
+
+	    defineProperties: function() {
+	    	this._super();
+	    	
+	    	Object.defineProperties(this, {
+	    		context: {
+					enumerable: true, 
+	    			get: function() { return this._context; } 
+	    		}
+	    	});
+		},
+	});
+})( use("rocket88") );
